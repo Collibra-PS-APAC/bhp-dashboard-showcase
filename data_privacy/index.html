@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Data Privacy | BHP</title>
+
+  <!-- This page sits one level below the bundle root, so it reaches the shared
+       assets with a single ../ hop (see docs/architecture.md). -->
+  <link rel="stylesheet" href="../css/fonts.css">
+  <link rel="stylesheet" href="../css/brand-tokens.css">
+  <link rel="stylesheet" href="../css/data-privacy.css">
+</head>
+<body>
+  <!-- No top header: the Collibra chrome above the iframe already carries the
+       BHP logo. The dashboard starts straight into its bento grid. -->
+  <main class="dp-page">
+    <div class="bento">
+
+      <!-- Header: identity + completion trend -->
+      <section class="tile head rise">
+        <div class="id">
+          <div class="eyebrow">Data Privacy</div>
+          <h1>Hi <span id="userFirstName">there</span></h1>
+        </div>
+        <div class="trend">
+          <div class="lbl"><b>Completion trend</b><small>work items completed per month</small></div>
+          <div class="spark" id="spark"></div>
+        </div>
+      </section>
+
+      <!-- Hero: my open work items -->
+      <section class="tile hero rise" style="animation-delay:.05s">
+        <div class="eyebrow">My open work items</div>
+        <div class="big" id="openCount">0</div>
+        <div class="cap">assigned to you, still open</div>
+        <div class="pills" id="heroPills"></div>
+      </section>
+
+      <!-- Scoped catalog search (mirrors the landing page) -->
+      <section class="tile search rise" style="animation-delay:.1s">
+        <h2>Search the catalog</h2>
+        <form class="csearch" id="catalogSearch" role="search" autocomplete="off">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+          <input type="text" id="searchInput" placeholder="Search the data catalog" aria-label="Search the data catalog">
+          <button type="submit">Search</button>
+        </form>
+        <div class="scope" id="searchScope" role="group" aria-label="Limit search to an asset type">
+          <span class="on" role="button" tabindex="0" data-scope="dataConcept">Business Data Concepts</span>
+          <span role="button" tabindex="0" data-scope="dpia">DPIAs</span>
+          <span role="button" tabindex="0" data-scope="all">All assets</span>
+        </div>
+      </section>
+
+      <!-- My work item queue, with the work-item-type filter -->
+      <section class="tile queue rise" style="animation-delay:.15s">
+        <div class="sh">
+          <h2>My work item queue <span class="meta" id="queueCount"></span></h2>
+          <div class="filter">
+            <button class="btn" id="filterBtn" type="button">Work Item Type: <b>All types</b> <span class="cv"></span></button>
+            <div class="menu" id="filterMenu"></div>
+          </div>
+        </div>
+        <div id="queueList">
+          <div class="dp-skel" style="width:70%"></div>
+          <div class="dp-skel" style="width:90%"></div>
+          <div class="dp-skel" style="width:60%"></div>
+        </div>
+      </section>
+
+      <!-- Unassigned + DSAR placeholder -->
+      <section class="tile rail rise" style="animation-delay:.2s">
+        <div class="sh"><h2>Unassigned</h2><span class="meta">no Assignee</span></div>
+        <div id="unassignedList">
+          <div class="dp-skel" style="width:80%"></div>
+          <div class="dp-skel" style="width:65%"></div>
+        </div>
+        <div class="dsar-div">DSAR</div>
+        <div class="dsar"><b>DSAR queue: coming soon</b><small>no Data Subject Access Request asset type on this instance yet</small></div>
+      </section>
+
+      <!-- Open work items by assignee -->
+      <section class="tile who rise" style="animation-delay:.25s">
+        <div class="sh"><h2>Open work items by assignee</h2><span class="meta" id="whoMeta"></span></div>
+        <div class="whochart" id="whoChart">
+          <div class="dp-skel" style="width:85%"></div>
+          <div class="dp-skel" style="width:65%"></div>
+          <div class="dp-skel" style="width:45%"></div>
+        </div>
+      </section>
+
+      <!-- DPIA status -->
+      <section class="tile dpia rise" style="animation-delay:.3s">
+        <div class="sh"><h2>DPIA status</h2><span class="meta" id="dpiaMeta">loading…</span></div>
+        <div class="body">
+          <div class="donut" id="donut"></div>
+          <div class="key" id="dpiaKey">
+            <div class="dp-skel" style="width:160px"></div>
+            <div class="dp-skel" style="width:140px"></div>
+            <div class="dp-skel" style="width:150px"></div>
+          </div>
+          <div class="note" id="dpiaNote"></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Load order is load-bearing (shared global scope, no modules):
+       1. utils.js  -> COLLIBRA_BASE, getCurrentUser
+       2. apexcharts -> ApexCharts
+       3. apex-bhp-theme -> BHPApex
+       4. privacy-data -> PrivacyData (fetchers + pure helpers)
+       5. privacy-page -> orchestrator, runs on DOMContentLoaded -->
+  <script src="../shared/utils.js"></script>
+  <script src="../vendor/apexcharts.min.js"></script>
+  <script src="../js/apex-bhp-theme.js"></script>
+  <script src="privacy-data.js"></script>
+  <script src="privacy-page.js"></script>
+
+  <!-- DEMO ONLY: a busier scenario (more items due today/this week), with due dates
+       computed relative to load time so the buckets stay correct on any demo day.
+       Runs after privacy-page.js so init runs ONCE with these sources. Never deploy. -->
+  <script>
+  (function(){
+    var now = Date.now(), DAY = 86400000, HR = 3600000;
+    function due(d){ return now + d*DAY + 8*HR; }
+    function opened(d){ return now - d*DAY; }
+
+    var mine = [
+      {wid:'DP-INC-0103', title:'Investigate access-log anomaly',          type:'Incident Investigation',    status:'Blocked',     d:-2},
+      {wid:'DP-POL-0131', title:'Review third-party processor agreement',  type:'Policy Review/Management',  status:'In Progress', d:-1},
+      {wid:'DP-ENQ-0102', title:'Respond to marketing data query',         type:'Enquiry',                   status:'To Do',       d:0},
+      {wid:'DP-DPI-0132', title:'Sign off DPIA for payroll vendor',        type:'DPIA',                      status:'Reviewed',    d:0},
+      {wid:'DP-ACT-0133', title:'Close out Q2 remediation actions',        type:'Action Tracking',           status:'In Progress', d:0},
+      {wid:'DP-SUP-0134', title:'Approve analytics access request',        type:'Support Request',           status:'To Do',       d:0},
+      {wid:'DP-DPI-0101', title:'Review DPIA for vendor onboarding',       type:'DPIA',                      status:'In Progress', d:2},
+      {wid:'DP-MAP-0135', title:'Update data map for Potash finance',      type:'Data Map Updates',          status:'To Do',       d:3},
+      {wid:'DP-ENQ-0136', title:'Cross-border transfer enquiry',          type:'Enquiry',                   status:'To Do',       d:4},
+      {wid:'DP-INC-0137', title:'Breach simulation follow-up actions',     type:'Incident Investigation',    status:'In Progress', d:6},
+      {wid:'DP-REP-0138', title:'Q2 privacy reporting pack',               type:'Reporting',                 status:'To Do',       d:14},
+      {wid:'DP-TRN-0139', title:'Schedule privacy awareness refresh',      type:'Training and Awareness',    status:'To Do',       d:22}
+    ];
+    var done = [
+      {wid:'DP-REP-0106', title:'May privacy metrics report',     type:'Reporting',                c:3},
+      {wid:'DP-POL-0107', title:'Annual retention policy review', type:'Policy Review/Management',  c:30},
+      {wid:'DP-TRN-0108', title:'Q1 privacy awareness rollout',   type:'Training and Awareness',    c:75},
+      {wid:'DP-SUP-0109', title:'Access-request tooling fix',     type:'Support Request',           c:110},
+      {wid:'DP-DPI-0110', title:'DPIA for HR analytics platform', type:'DPIA',                      c:140}
+    ];
+    var unassigned = [
+      {wid:'DP-OTH-0120', title:'Annual data-breach simulation', type:'Other'},
+      {wid:'DP-REP-0121', title:'Q2 privacy reporting pack',     type:'Reporting'},
+      {wid:'DP-SUP-0122', title:'DSAR intake support',           type:'Support Request'}
+    ];
+    /* Open items held by the rest of the team, for the by-assignee chart. */
+    var others = [
+      {wid:'DP-DPI-0140', title:'DPIA for haul-truck telemetry',          type:'DPIA',                     status:'In Progress', who:'Marcus Webb', d:2},
+      {wid:'DP-DPI-0141', title:'DPIA renewal: contractor portal',        type:'DPIA',                     status:'To Do',       who:'Marcus Webb', d:5},
+      {wid:'DP-INC-0142', title:'Triage exported-report incident',        type:'Incident Investigation',   status:'In Progress', who:'Marcus Webb', d:1},
+      {wid:'DP-ENQ-0143', title:'Retention enquiry from Legal',           type:'Enquiry',                  status:'To Do',       who:'Marcus Webb', d:7},
+      {wid:'DP-MAP-0144', title:'Data map refresh: Iron Ore ops',         type:'Data Map Updates',         status:'Reviewed',    who:'Marcus Webb', d:9},
+      {wid:'DP-ACT-0145', title:'Chase outstanding consent records',      type:'Action Tracking',          status:'To Do',       who:'Marcus Webb', d:12},
+      {wid:'DP-POL-0146', title:'Update CCTV signage policy',             type:'Policy Review/Management', status:'Blocked',     who:'Marcus Webb', d:15},
+      {wid:'DP-TRN-0147', title:'Contractor privacy induction deck',      type:'Training and Awareness',   status:'In Progress', who:'Aisha Patel',   d:3},
+      {wid:'DP-ENQ-0148', title:'Employee photo-use enquiry',             type:'Enquiry',                  status:'To Do',       who:'Aisha Patel',   d:6},
+      {wid:'DP-REP-0149', title:'Board privacy metrics one-pager',        type:'Reporting',                status:'To Do',       who:'Aisha Patel',   d:10},
+      {wid:'DP-SUP-0150', title:'Fix DSAR intake form routing',           type:'Support Request',          status:'In Progress', who:'Aisha Patel',   d:8},
+      {wid:'DP-DPI-0151', title:'Pre-screen DPIA: wellness app pilot',    type:'DPIA',                     status:'To Do',       who:'Elena Russo',   d:11},
+      {wid:'DP-MAP-0152', title:'Map new payroll integration flows',      type:'Data Map Updates',         status:'In Progress', who:'Elena Russo',   d:13}
+    ];
+
+    var items = [];
+    mine.forEach(function(m,i){ items.push({id:'mine-'+i, workItemId:m.wid, title:m.title, type:m.type, status:m.status, assignee:'Shane Dolley', openedMs:opened(20), closedMs:null, dueMs:due(m.d)}); });
+    done.forEach(function(m,i){ items.push({id:'done-'+i, workItemId:m.wid, title:m.title, type:m.type, status:'Done', assignee:'Shane Dolley', openedMs:opened(m.c+10), closedMs:now - m.c*DAY, dueMs:null}); });
+    unassigned.forEach(function(m,i){ items.push({id:'un-'+i, workItemId:m.wid, title:m.title, type:m.type, status:'To Do', assignee:'', openedMs:opened(5), closedMs:null, dueMs:due(5+i)}); });
+    others.forEach(function(m,i){ items.push({id:'oth-'+i, workItemId:m.wid, title:m.title, type:m.type, status:m.status, assignee:m.who, openedMs:opened(15), closedMs:null, dueMs:due(m.d)}); });
+
+    var fx = { user: {"firstName": "Shane", "lastName": "Dolley Collibra", "userName": "shane.dolley", "id": "019ddcad-25b2-750e-bb6f-5aa48596c053"}, types: ["Action Tracking", "Data Map Updates", "DPIA", "Enquiry", "Incident Investigation", "Other", "Policy Review/Management", "Reporting", "Support Request", "Training and Awareness"], dpia: {"total": 733, "mix": [{"name": "Completed", "n": 608}, {"name": "Not Required", "n": 121}, {"name": "Unknown", "n": 2}, {"name": "In Progress", "n": 1}, {"name": "Required-Not Started", "n": 1}]} };
+    window.getCurrentUser = function(){ return Promise.resolve(fx.user); };
+    PrivacyData.fetchWorkItems = function(){ return Promise.resolve(items); };
+    PrivacyData.fetchWorkItemTypeOptions = function(){ return Promise.resolve(fx.types); };
+    PrivacyData.fetchDpiaStatusMix = function(){ return Promise.resolve(fx.dpia); };
+    dpRunSearch = function(e){ e.preventDefault(); };
+    dpAssetHref = function(){ return '#'; };
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+/* BHP brand design tokens.
+   Anchored on BHP Orange #E65400 (from the official logo SVG).
+   #E65400 is the DARKEST shade in the orange ramp; all other shades are lighter
+   tints, so interactive states (hover, active) brighten rather than darken.
+   Use these variables across the custom dashboard for a consistent brand.
+   The same hex values map to Collibra's Custom Theme slots; see CLAUDE.md. */
+
+:root {
+  /* --- Core brand: Orange ramp (E65400 = darkest, tints go up) --- */
+  --bhp-orange:        #E65400;  /* primary brand anchor — darkest shade, primary button at rest */
+  --bhp-orange-hover:  #FF6A1A;  /* hover — brightens */
+  --bhp-orange-active: #FF7A33;  /* active / pressed — brightens further */
+  --bhp-orange-light:  #FF8A4D;  /* accents on dark (navy) surfaces */
+  --bhp-orange-tint:   #FFB489;  /* light tint */
+  --bhp-orange-pale:   #FFE0CE;  /* chips, badges, tags */
+  --bhp-orange-wash:   #FFF4EC;  /* subtle section fills, hover rows */
+
+  /* --- Ground: ink & neutrals (pair with the navy header) --- */
+  --bhp-ink:           #0B1F2A;  /* primary text, dark surfaces, header navy */
+  --bhp-ink-2:         #102A38;
+  --bhp-slate:         #3D4F5C;  /* secondary outlines, borders */
+  --bhp-grey:          #6B7B86;  /* muted text, inactive */
+  --bhp-line:          #E4E1DC;  /* hairlines on light */
+  --bhp-paper:         #F7F5F2;  /* page background */
+
+  /* --- Cool complement: Teal (secondary accent) --- */
+  --bhp-teal:          #0E7C86;  /* secondary accent — secondary-button outline + text (light) */
+  --bhp-teal-dark:     #0A5A61;  /* teal dark */
+  --bhp-teal-deep:     #083F45;  /* teal deep — secondary-button pressed fill */
+  --bhp-teal-light:    #3FA9B3;  /* teal on dark surfaces */
+  --bhp-teal-bright:   #3EC3D2;  /* bright teal — secondary-button outline + text on dark (navy) */
+  --bhp-teal-pale:     #B8E5EA;  /* light teal — secondary-button hover fill (light) */
+  --bhp-stone:         #615555;  /* warm grey — date-picker range text */
+
+  /* --- Semantic roles --- */
+  --color-primary:        var(--bhp-orange);
+  --color-primary-hover:  var(--bhp-orange-hover);
+  --color-primary-active: var(--bhp-orange-active);
+  --color-on-primary:     #FFFFFF;
+  --color-secondary:        var(--bhp-teal);
+  --color-secondary-hover:  var(--bhp-teal-dark);
+  --color-secondary-active: var(--bhp-teal-deep);
+  --color-on-secondary:     #FFFFFF;
+  --color-text:           var(--bhp-ink);
+  --color-text-muted:     var(--bhp-grey);
+  --color-bg:             var(--bhp-paper);
+  --color-border:         var(--bhp-line);
+
+  /* --- Type --- */
+  /* Arimo is self-hosted (css/fonts.css), metric-identical to Arial, with weights 400-700.
+     Arial is the fallback if Arimo fails to load, so the look stays consistent either way. */
+  --font-body: Arimo, Arial, "Helvetica Neue", Helvetica, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;  /* buttons, emphasized labels */
+  --font-weight-bold: 700;
+}
