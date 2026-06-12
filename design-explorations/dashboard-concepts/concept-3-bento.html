@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concept 3 · Bento Grid - BHP dashboard</title>
+<link rel="stylesheet" href="../../css/fonts.css">
+<link rel="stylesheet" href="../../css/brand-tokens.css">
+<link rel="stylesheet" href="../../brand/transitions.css">
+<script src="../../brand/transitions.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);color:var(--bhp-ink);background:var(--bhp-paper)}
+  .xbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;background:rgba(11,31,42,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.1);padding:10px 22px;color:#EAF1F4}
+  .xbar a.back{display:inline-flex;align-items:center;gap:7px;color:#9DB0BB;text-decoration:none;font-size:13px}
+  .xbar a.back:hover{color:#FF8A4D}.xbar a.back svg{width:14px;height:14px}
+  .xbar .lbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#7C8E99}
+  .xbar .lbl b{color:#fff;font-weight:700;letter-spacing:0;text-transform:none;font-size:13.5px;margin-right:9px}
+
+  .page{max-width:1220px;margin:0 auto;padding:34px 36px 70px}
+  /* full-width search */
+  .search{display:flex;gap:10px;margin-bottom:18px}
+  .field{flex:1;position:relative;display:flex;align-items:center}
+  .field svg{position:absolute;left:16px;width:20px;height:20px;color:var(--bhp-grey)}
+  .field input{width:100%;padding:16px 16px 16px 46px;border:1.5px solid var(--bhp-line);border-radius:14px;background:#fff;font-family:var(--font-body);font-size:15px;color:var(--bhp-ink);outline:none;box-shadow:0 6px 18px rgba(11,31,42,.05)}
+  .field input:focus{border-color:var(--bhp-orange);box-shadow:0 0 0 3px rgba(230,84,0,.18)}
+  .btn{border:none;background:var(--bhp-orange);color:#fff;font-family:var(--font-body);font-weight:500;font-size:15px;padding:0 30px;border-radius:14px;cursor:pointer;transition:background .18s}
+  .btn:hover{background:var(--bhp-orange-hover)}
+  .scope{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+  .scope span{font-size:13px;color:var(--bhp-slate);background:#fff;border:1px solid var(--bhp-line);border-radius:999px;padding:7px 14px;cursor:pointer}
+  .scope span.on{background:var(--bhp-orange-wash);border-color:var(--bhp-orange);color:var(--orange-deep,#A63D00);font-weight:600}
+
+  /* bento */
+  .bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:148px;gap:14px;
+    grid-template-areas:
+      "hero hero growth growth"
+      "kA   kB   growth growth"
+      "kC   kD   domain tasks"
+      "kE   gau  domain tasks";}
+  .tile{background:#fff;border:1px solid var(--bhp-line);border-radius:16px;padding:18px;overflow:hidden;transition:transform .18s,box-shadow .18s}
+  .tile:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(11,31,42,.12)}
+  .hero{grid-area:hero;color:#fff;border:none;display:flex;flex-direction:column;justify-content:center;
+    background:linear-gradient(135deg,#FF7A33,var(--bhp-orange) 55%,#C4470A);position:relative}
+  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.2),transparent 52%)}
+  .hero > *{position:relative;z-index:1}
+  .hero .eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.85);font-weight:700}
+  .hero h1{font-size:clamp(24px,2.8vw,34px);line-height:1.06;font-weight:700;margin:8px 0 6px}
+  .hero p{font-size:13.5px;color:rgba(255,255,255,.9)}.hero p b{color:#fff}
+  .growth{grid-area:growth}.domain{grid-area:domain}.tasks{grid-area:tasks;padding:0}
+  .gau{grid-area:gau;text-align:center;padding:6px 6px 0}
+  .kA{grid-area:kA}.kB{grid-area:kB}.kC{grid-area:kC}.kD{grid-area:kD}.kE{grid-area:kE}
+  .kpi .v{font-size:28px;font-weight:700;letter-spacing:-.02em;color:var(--bhp-orange);font-variant-numeric:tabular-nums}
+  .kpi .l{font-size:12px;color:var(--bhp-grey);margin-top:2px}
+  .kpi .s{margin-top:8px;height:30px}
+  .th{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+  .th h2{font-size:14px;font-weight:700}.th .n{font-size:11.5px;color:var(--bhp-grey)}
+  .gl{font-size:12px;color:var(--bhp-grey);margin-top:-6px}
+
+  /* tasks tile internals */
+  .tasks .th2{display:flex;align-items:center;justify-content:space-between;padding:15px 16px;border-bottom:1px solid var(--bhp-line)}
+  .tasks .th2 h2{font-size:14px;font-weight:700}
+  .badge{background:var(--bhp-orange-pale);color:var(--orange-deep,#A63D00);font-size:12px;font-weight:600;border-radius:14px;padding:2px 9px}
+  .ti{padding:11px 16px;border-bottom:1px solid var(--bhp-line);cursor:pointer}
+  .ti:last-child{border-bottom:none}.ti:hover{background:var(--bhp-orange-wash)}
+  .ti .t{font-size:13px;font-weight:500}
+  .ti .m{display:flex;gap:10px;margin-top:4px;font-size:11px;color:var(--bhp-grey)}.ti .m .due{color:var(--orange-deep,#A63D00)}
+
+  .rise{opacity:0;transform:translateY(14px);animation:rise .55s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.rise{animation:none;opacity:1;transform:none}}
+  @media (max-width:1000px){
+    .bento{grid-auto-rows:auto;grid-template-columns:repeat(2,1fr);
+      grid-template-areas:"hero hero" "kA kB" "kC kD" "kE gau" "growth growth" "domain domain" "tasks tasks";}
+    .growth,.domain{min-height:300px}
+  }
+</style>
+</head>
+<body>
+<div class="xbar">
+  <a class="back" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>All concepts</a>
+  <span class="lbl"><b>Concept 3</b> Bento Grid · modular tiles</span>
+</div>
+
+<main class="page">
+  <form class="search rise" onsubmit="return false">
+    <div class="field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search the data catalog"></div>
+    <button class="btn">Search</button>
+  </form>
+  <div class="scope rise" style="animation-delay:.04s"><span class="on">All assets</span><span>Data Utilities</span><span>Business Data Concepts</span><span>Business Applications</span><span>Business Terms</span></div>
+
+  <div class="bento rise" style="animation-delay:.1s">
+    <div class="tile hero">
+      <p class="eyebrow">BHP Data Catalog</p>
+      <h1>Hi Shane.</h1>
+      <p>Search across <b id="total">24,843</b> governed assets.</p>
+    </div>
+    <div class="tile growth">
+      <div class="th"><h2>Catalog growth</h2><span class="n">12 months (000s)</span></div>
+      <div id="growth"></div>
+    </div>
+    <div class="tile kpi kA"><div class="v" id="v-dataUtilities">0</div><div class="l">Data Utilities</div><div class="s" id="s-dataUtilities"></div></div>
+    <div class="tile kpi kB"><div class="v" id="v-businessDataConcepts">0</div><div class="l">Business Data Concepts</div><div class="s" id="s-businessDataConcepts"></div></div>
+    <div class="tile kpi kC"><div class="v" id="v-businessApplications">0</div><div class="l">Business Applications</div><div class="s" id="s-businessApplications"></div></div>
+    <div class="tile kpi kD"><div class="v" id="v-users">0</div><div class="l">Active users</div><div class="s" id="s-users"></div></div>
+    <div class="tile kpi kE"><div class="v" id="v-myTasks">0</div><div class="l">My open tasks</div><div class="s" id="s-myTasks"></div></div>
+    <div class="tile gau"><div id="fair"></div><div class="gl">FAIR score</div></div>
+    <div class="tile domain">
+      <div class="th"><h2>Composition by domain</h2></div>
+      <div id="domain"></div>
+    </div>
+    <div class="tile tasks">
+      <div class="th2"><h2>My tasks</h2><span class="badge">3</span></div>
+      <div id="tasklist"></div>
+    </div>
+  </div>
+</main>
+
+<script src="../../vendor/apexcharts.min.js"></script>
+<script src="../../js/apex-bhp-theme.js"></script>
+<script src="data.js"></script>
+<script src="helpers.js"></script>
+<script>
+  var D = window.DASH;
+  document.getElementById('total').textContent = DUTIL.fmt(D.assetsTotal);
+  document.getElementById('tasklist').innerHTML = D.tasks.map(function(t){
+    return '<div class="ti"><div class="t">'+t.title+'</div><div class="m"><span>'+t.type+'</span><span class="'+(t.soon?'due':'')+'">'+t.due+'</span></div></div>';
+  }).join('');
+  function render(){
+    if(!window.ApexCharts||!window.BHPApex){return;}
+    D.kpis.forEach(function(k){ DUTIL.countUp('#v-'+k.key,k.value); DUTIL.spark('#s-'+k.key,k.spark,30); });
+    new ApexCharts(document.querySelector('#growth'), BHPApex.area({series:[{name:'Curated assets',data:D.growth}],categories:D.months,height:250,extra:{legend:{show:false}}})).render();
+    new ApexCharts(document.querySelector('#domain'), BHPApex.bar({series:[{name:'Assets',data:D.domains.map(function(d){return d.n;})}],categories:D.domains.map(function(d){return d.name;}),height:230,extra:{legend:{show:false}}})).render();
+    new ApexCharts(document.querySelector('#fair'), BHPApex.radial({series:[D.fairScore],labels:['FAIR'],height:140})).render();
+  }
+  if(document.readyState!=='loading'){render();}else{window.addEventListener('DOMContentLoaded',render);}
+</script>
+</body>
+</html>

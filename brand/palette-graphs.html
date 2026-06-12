@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BHP - Graphs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../css/fonts.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="palette.css">
+<link rel="stylesheet" href="transitions.css">
+<script src="transitions.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="palette-preview.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back to palette</a>
+  <header class="head">
+    <div>
+      <div class="eyebrow">BHP Orange Theme System</div>
+      <h1>Graphs <span class="accent">· ApexCharts</span></h1>
+    </div>
+    <p class="sub">Every chart type on the gradient-forward BHP theme. Build charts through the <b style="color:#fff">BHPApex</b> helpers in <b style="color:#fff">apex-bhp-theme.js</b> rather than styling each one by hand.</p>
+  </header>
+
+  <div class="section-label">Chart styling · ApexCharts · gradient-forward</div>
+  <div class="charts">
+    <div class="chart-card"><div class="clabel"><span>Column</span><b>gradient</b></div><div id="c-column"></div></div>
+    <div class="chart-card"><div class="clabel"><span>Bar</span><b>gradient</b></div><div id="c-bar"></div></div>
+    <div class="chart-card"><div class="clabel"><span>Line</span><b>gradient stroke</b></div><div id="c-line"></div></div>
+    <div class="chart-card"><div class="clabel"><span>Area</span><b>gradient fill</b></div><div id="c-area"></div></div>
+    <div class="chart-card"><div class="clabel"><span>Radial</span><b>gradient</b></div><div id="c-radial"></div></div>
+    <div class="chart-card"><div class="clabel"><span>Gauge</span><b>gradient</b></div><div id="c-gauge"></div></div>
+    <div class="chart-card span2"><div class="clabel"><span>Sparklines</span><b>gradient area</b></div>
+      <div class="spark-wrap">
+        <div class="kpi">1,247<small>Data Products</small></div>
+        <div id="c-spark"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">BHP ORANGE #E65400 (DARKEST) · APEXCHARTS GRADIENT THEME · BHPApex HELPERS · GENERATED FOR the test instance</div>
+</div>
+<script src="../vendor/apexcharts.min.js"></script>
+<script src="../js/apex-bhp-theme.js"></script>
+<script>
+  function renderCharts(){
+    if(!window.ApexCharts || !window.BHPApex){ return; }
+    var months = ['Jan','Feb','Mar','Apr','May','Jun'];
+    new ApexCharts(document.querySelector('#c-column'), BHPApex.column({
+      series:[{name:'Data Products', data:[32,44,38,57,63,79]}], categories:months, height:230,
+      extra:{legend:{show:false}}
+    })).render();
+    new ApexCharts(document.querySelector('#c-bar'), BHPApex.bar({
+      series:[{name:'Assets', data:[124,86,64,52,38]}],
+      categories:['Operations','Minerals','Petroleum','Corporate','Marketing'], height:230,
+      extra:{legend:{show:false}}
+    })).render();
+    new ApexCharts(document.querySelector('#c-line'), BHPApex.line({
+      series:[{name:'Active users', data:[210,260,245,300,355,420]}], categories:months, height:230,
+      extra:{legend:{show:false}}
+    })).render();
+    new ApexCharts(document.querySelector('#c-area'), BHPApex.area({
+      series:[{name:'Searches', data:[44,55,57,70,78,95]},{name:'Downloads', data:[20,28,25,36,40,52]}],
+      categories:months, height:230
+    })).render();
+    new ApexCharts(document.querySelector('#c-radial'), BHPApex.radial({
+      series:[78], labels:['FAIR score'], height:250
+    })).render();
+    new ApexCharts(document.querySelector('#c-gauge'), BHPApex.gauge({
+      series:[62], labels:['Quality coverage'], height:230
+    })).render();
+    new ApexCharts(document.querySelector('#c-spark'), BHPApex.sparkline({
+      series:[{name:'Trend', data:[12,18,15,22,19,28,33,30,41,38,47]}], height:80
+    })).render();
+  }
+  if(document.readyState !== 'loading'){ renderCharts(); } else { window.addEventListener('DOMContentLoaded', renderCharts); }
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BHP - Routing components</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../css/fonts.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="palette.css">
+<link rel="stylesheet" href="transitions.css">
+<script src="transitions.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="palette-preview.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back to palette</a>
+  <header class="head">
+    <div>
+      <div class="eyebrow">BHP Orange Theme System</div>
+      <h1>Routing <span class="accent">components</span></h1>
+    </div>
+    <p class="sub">What the dashboard shows while it works out where to send each user - and the branded placeholders it routes them to. Built only from the brand tokens.</p>
+  </header>
+
+  <div class="section-label">Routing · loading · interstitial · task panel · DLM tile · stub shell</div>
+  <div class="comp-grid">
+
+    <!-- 1 · Loading overlay -->
+    <div class="comp-card span2">
+      <div class="clabel"><span>Loading overlay</span><b>navy · teal spinner · aria-busy</b></div>
+      <div class="ctag">Shown on DOMContentLoaded, before routing resolves</div>
+      <div class="crow">
+        <div class="lov" role="status" aria-busy="true" style="width:100%">
+          <img src="../img/bhp-logo-white.svg" alt="BHP">
+          <div class="spinner" aria-hidden="true"></div>
+          <div class="lov-text">Setting up your workspace…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 · Routing interstitial -->
+    <div class="comp-card span2">
+      <div class="clabel"><span>Routing interstitial</span><b>progress · aria-live</b></div>
+      <div class="ctag">Brief hand-off before auto-navigating Utilities / Privacy users</div>
+      <div class="crow" style="justify-content:center;padding:8px 0">
+        <div class="intr" role="status">
+          <h4>Taking you to Data Privacy</h4>
+          <p>Opening your privacy workspace…</p>
+          <div class="bar" aria-hidden="true"><i></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 · Workflow-task panel -->
+    <div class="comp-card span2">
+      <div class="clabel"><span>Workflow-task panel</span><b>right rail · 4 states · collapsed</b></div>
+
+      <div class="ctag">Populated (right-rail, viewports &gt; 960px)</div>
+      <div class="crow">
+        <aside class="wtp" aria-label="Your workflow tasks, 3 open">
+          <div class="wtp-head"><span class="t">Your tasks</span><span class="wtp-badge">3</span></div>
+          <div class="wtp-item"><div class="ti">Review DSAR request #1042</div><div class="mt"><span>DSAR</span><span class="due">Due in 2 days</span></div></div>
+          <div class="wtp-item"><div class="ti">Complete privacy work item</div><div class="mt"><span>Work item</span><span class="due">Due tomorrow</span></div></div>
+          <div class="wtp-item"><div class="ti">Assign retention schedule</div><div class="mt"><span>DLM</span><span>Due in 6 days</span></div></div>
+        </aside>
+      </div>
+
+      <div class="ctag">Loading skeleton · Empty · Error</div>
+      <div class="crow" style="align-items:flex-start">
+        <aside class="wtp" aria-label="Your workflow tasks, loading" aria-busy="true">
+          <div class="wtp-head"><span class="t">Your tasks</span></div>
+          <div class="wtp-skel" style="width:78%"></div>
+          <div class="wtp-skel" style="width:54%"></div>
+          <div class="wtp-skel" style="width:70%"></div>
+          <div class="wtp-skel" style="width:46%"></div>
+        </aside>
+        <aside class="wtp" aria-label="Your workflow tasks, none assigned">
+          <div class="wtp-head"><span class="t">Your tasks</span><span class="wtp-badge">0</span></div>
+          <div class="wtp-state">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            No tasks assigned
+          </div>
+        </aside>
+        <aside class="wtp" aria-label="Your workflow tasks, failed to load">
+          <div class="wtp-head"><span class="t">Your tasks</span></div>
+          <div class="wtp-state err" role="alert">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+            Couldn’t load your tasks
+          </div>
+        </aside>
+      </div>
+
+      <div class="ctag">Collapsed (viewports &lt; 960px)</div>
+      <div class="crow">
+        <aside class="wtp wtp--collapsed" aria-label="Your workflow tasks, 3 open">
+          <span class="t">Your tasks</span>
+          <span style="font-size:12.5px;color:var(--grey)">3 open · next due tomorrow</span>
+          <span class="wtp-badge">3</span>
+        </aside>
+      </div>
+    </div>
+
+    <!-- 4 · DLM link tile -->
+    <div class="comp-card span2">
+      <div class="clabel"><span>DLM link tile</span><b>lifecycle icon · orange-wash hover</b></div>
+      <div class="ctag">Shown to DLM members on the general landing (rest · hover)</div>
+      <div class="crow" style="align-items:flex-start">
+        <a class="dlm-tile" href="#">
+          <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg></span>
+          <span class="tx"><b>Data Lifecycle Management</b><span>Open your DLM dashboard</span></span>
+          <span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="dlm-tile is-hover" href="#">
+          <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg></span>
+          <span class="tx"><b>Data Lifecycle Management</b><span>Open your DLM dashboard</span></span>
+          <span class="arr" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 5 · Persona stub shell -->
+    <div class="comp-card span2">
+      <div class="clabel"><span>Persona stub shell</span><b>heading · descriptor · back link</b></div>
+      <div class="ctag">Shared shell for the Utilities / Privacy / DLM stub pages</div>
+      <div class="crow">
+        <div class="stub" style="width:100%">
+          <div class="stub-body">
+            <h4>Data Privacy</h4>
+            <p class="desc">Your privacy workspace for DSARs, DPIAs, and work items is coming soon. This is a preview of where your dedicated dashboard will live.</p>
+            <a class="stub-back" href="#"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back to landing</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">BHP ORANGE #E65400 (DARKEST) · ROUTING COMPONENTS · BUILT FROM BRAND TOKENS · GENERATED FOR the test instance</div>
+</div>
+</body>
+</html>

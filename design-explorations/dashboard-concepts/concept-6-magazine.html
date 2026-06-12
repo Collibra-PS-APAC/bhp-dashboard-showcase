@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concept 6 · Magazine Split - BHP dashboard</title>
+<link rel="stylesheet" href="../../css/fonts.css">
+<link rel="stylesheet" href="../../css/brand-tokens.css">
+<link rel="stylesheet" href="../../brand/transitions.css">
+<script src="../../brand/transitions.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);color:var(--bhp-ink);background:var(--bhp-paper)}
+  .xbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;background:rgba(11,31,42,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.1);padding:10px 22px;color:#EAF1F4}
+  .xbar a.back{display:inline-flex;align-items:center;gap:7px;color:#9DB0BB;text-decoration:none;font-size:13px}
+  .xbar a.back:hover{color:#FF8A4D}.xbar a.back svg{width:14px;height:14px}
+  .xbar .lbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#7C8E99}
+  .xbar .lbl b{color:#fff;font-weight:700;letter-spacing:0;text-transform:none;font-size:13.5px;margin-right:9px}
+
+  .split{max-width:1240px;margin:0 auto;padding:34px 36px 70px;display:grid;grid-template-columns:0.92fr 1.35fr;gap:26px;align-items:start}
+
+  /* left editorial panel */
+  .left{background:var(--bhp-orange-wash);border:1px solid var(--bhp-orange-pale);border-radius:22px;padding:34px 30px;position:sticky;top:60px;overflow:hidden}
+  .left::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(230,84,0,.16),transparent 70%)}
+  .left > *{position:relative;z-index:1}
+  .eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--bhp-orange);font-weight:700;margin-bottom:16px}
+  .greet{font-size:clamp(34px,4vw,52px);line-height:1.0;letter-spacing:-.025em;font-weight:700}
+  .greet .nm{color:var(--bhp-orange)}
+  .greet .q{display:block;color:var(--bhp-slate);font-weight:400;font-size:clamp(18px,2vw,24px);margin-top:10px;line-height:1.25}
+  .lede{color:var(--bhp-slate);font-size:14.5px;margin-top:16px}.lede b{color:var(--bhp-ink);font-weight:700}
+  .search{margin-top:22px}
+  .field{position:relative;display:flex;align-items:center}
+  .field svg{position:absolute;left:16px;width:20px;height:20px;color:var(--bhp-grey)}
+  .field input{width:100%;padding:15px 16px 15px 46px;border:1.5px solid var(--bhp-orange-pale);border-radius:12px;background:#fff;font-family:var(--font-body);font-size:15px;color:var(--bhp-ink);outline:none}
+  .field input:focus{border-color:var(--bhp-orange);box-shadow:0 0 0 3px rgba(230,84,0,.18)}
+  .btn{width:100%;margin-top:10px;border:none;background:var(--bhp-orange);color:#fff;font-family:var(--font-body);font-weight:500;font-size:15px;padding:14px;border-radius:12px;cursor:pointer;transition:background .18s}
+  .btn:hover{background:var(--bhp-orange-hover)}
+  .scope{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .scope span{font-size:12.5px;color:var(--bhp-slate);background:#fff;border:1px solid var(--bhp-orange-pale);border-radius:999px;padding:6px 12px;cursor:pointer}
+  .scope span.on{background:var(--bhp-orange);border-color:var(--bhp-orange);color:#fff;font-weight:600}
+  .ldiv{height:1px;background:var(--bhp-orange-pale);margin:26px 0 18px}
+  .ltask-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .ltask-h h2{font-size:15px;font-weight:700}
+  .badge{background:#fff;color:var(--orange-deep,#A63D00);border:1px solid var(--bhp-orange-pale);font-size:12px;font-weight:600;border-radius:14px;padding:2px 9px}
+  .ti{background:#fff;border:1px solid var(--bhp-orange-pale);border-radius:12px;padding:12px 14px;cursor:pointer;transition:transform .15s,border-color .15s}
+  .ti+.ti{margin-top:8px}.ti:hover{transform:translateX(3px);border-color:var(--bhp-orange)}
+  .ti .t{font-size:13px;font-weight:500}.ti .m{display:flex;gap:10px;margin-top:4px;font-size:11px;color:var(--bhp-grey)}.ti .m .due{color:var(--orange-deep,#A63D00)}
+
+  /* right column */
+  .right{display:flex;flex-direction:column;gap:18px}
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .stat{background:#fff;border:1px solid var(--bhp-line);border-radius:14px;padding:15px 14px 9px}
+  .stat .v{font-size:24px;font-weight:700;letter-spacing:-.02em;color:var(--bhp-ink);font-variant-numeric:tabular-nums}
+  .stat:first-child .v{color:var(--bhp-orange)}
+  .stat .l{font-size:11px;color:var(--bhp-grey);margin-top:2px}.stat .s{margin-top:6px;height:28px}
+  .card{background:#fff;border:1px solid var(--bhp-line);border-radius:18px;padding:20px 20px 8px}
+  .cap{display:flex;align-items:baseline;justify-content:space-between;margin:2px 2px 4px}
+  .cap h2{font-size:16px;font-weight:700}.cap .n{font-size:12px;color:var(--bhp-grey)}
+
+  .rise{opacity:0;transform:translateY(14px);animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.rise{animation:none;opacity:1;transform:none}}
+  @media (max-width:960px){.split{grid-template-columns:1fr}.left{position:static}.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="xbar">
+  <a class="back" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>All concepts</a>
+  <span class="lbl"><b>Concept 6</b> Magazine Split · asymmetric, sticky hero</span>
+</div>
+
+<div class="split">
+  <aside class="left rise">
+    <p class="eyebrow">BHP Data Catalog</p>
+    <h1 class="greet">Hi <span class="nm">Shane</span>.<span class="q">What can we help you find today?</span></h1>
+    <p class="lede">Search across <b id="total">24,843</b> governed assets.</p>
+    <form class="search" onsubmit="return false">
+      <div class="field"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input placeholder="Search the data catalog"></div>
+      <button class="btn">Search</button>
+    </form>
+    <div class="scope"><span class="on">All assets</span><span>Data Utilities</span><span>Business Data Concepts</span><span>Business Applications</span><span>Business Terms</span></div>
+    <div class="ldiv"></div>
+    <div class="ltask-h"><h2>My tasks</h2><span class="badge">3 open</span></div>
+    <div id="tasklist"></div>
+  </aside>
+
+  <section class="right rise" style="animation-delay:.1s">
+    <div class="stats" id="stats"></div>
+    <div class="card"><div class="cap"><h2>Catalog growth</h2><span class="n">curated assets, last 12 months (000s)</span></div><div id="growth"></div></div>
+    <div class="card"><div class="cap"><h2>Composition by domain</h2><span class="n">top BHP communities</span></div><div id="domain"></div></div>
+  </section>
+</div>
+
+<script src="../../vendor/apexcharts.min.js"></script>
+<script src="../../js/apex-bhp-theme.js"></script>
+<script src="data.js"></script>
+<script src="helpers.js"></script>
+<script>
+  var D = window.DASH;
+  document.getElementById('total').textContent = DUTIL.fmt(D.assetsTotal);
+  document.getElementById('stats').innerHTML = D.kpis.map(function(k){
+    return '<div class="stat"><div class="v" id="v-'+k.key+'">0</div><div class="l">'+k.label+'</div><div class="s" id="s-'+k.key+'"></div></div>';
+  }).join('');
+  document.getElementById('tasklist').innerHTML = D.tasks.map(function(t){
+    return '<div class="ti"><div class="t">'+t.title+'</div><div class="m"><span>'+t.type+'</span><span class="'+(t.soon?'due':'')+'">'+t.due+'</span></div></div>';
+  }).join('');
+  function render(){
+    if(!window.ApexCharts||!window.BHPApex){return;}
+    D.kpis.forEach(function(k){ DUTIL.countUp('#v-'+k.key,k.value); DUTIL.spark('#s-'+k.key,k.spark,28); });
+    new ApexCharts(document.querySelector('#growth'), BHPApex.area({series:[{name:'Curated assets',data:D.growth}],categories:D.months,height:240,extra:{legend:{show:false}}})).render();
+    new ApexCharts(document.querySelector('#domain'), BHPApex.bar({series:[{name:'Assets',data:D.domains.map(function(d){return d.n;})}],categories:D.domains.map(function(d){return d.name;}),height:250,extra:{legend:{show:false}}})).render();
+  }
+  if(document.readyState!=='loading'){render();}else{window.addEventListener('DOMContentLoaded',render);}
+</script>
+</body>
+</html>

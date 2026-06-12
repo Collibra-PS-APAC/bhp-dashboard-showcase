@@ -1,0 +1,55 @@
+/* Directional page transitions for the BHP preview pages.
+   Built on cross-document (MPA) View Transitions - no library.
+
+   How it works:
+   - @view-transition opts every linked page into a transition on same-origin
+     navigation. transitions.js tags each navigation with a direction "type"
+     (slide-left / slide-right / slide-down / slide-up) in the pageswap and
+     pagereveal events; the rules below animate the root snapshots per type.
+   - Routes: palette-preview <-> collibra-theme-config slide left/right;
+     palette-preview -> a component subpage slides down; a subpage -> palette
+     -preview slides up.
+
+   Progressive enhancement: browsers without cross-document view transitions
+   (Firefox today) ignore all of this and navigate normally. Same-origin only,
+   so it animates when the pages are served together (e.g. on the test instance), not
+   necessarily over file://. */
+
+@view-transition { navigation: auto; }
+
+/* Shared timing for the full-page slide. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+/* Horizontal: palette-preview <-> collibra config -------------------------- */
+html:active-view-transition-type(slide-left)::view-transition-old(root)  { animation-name: vt-out-left; }
+html:active-view-transition-type(slide-left)::view-transition-new(root)  { animation-name: vt-in-right; }
+html:active-view-transition-type(slide-right)::view-transition-old(root) { animation-name: vt-out-right; }
+html:active-view-transition-type(slide-right)::view-transition-new(root) { animation-name: vt-in-left; }
+
+/* Vertical: into a subpage (down) / back up to the palette hub (up) --------- */
+html:active-view-transition-type(slide-down)::view-transition-old(root)  { animation-name: vt-out-down; }
+html:active-view-transition-type(slide-down)::view-transition-new(root)  { animation-name: vt-in-top; }
+html:active-view-transition-type(slide-up)::view-transition-old(root)    { animation-name: vt-out-up; }
+html:active-view-transition-type(slide-up)::view-transition-new(root)    { animation-name: vt-in-bottom; }
+
+@keyframes vt-out-left  { to   { transform: translateX(-100%); } }
+@keyframes vt-in-right  { from { transform: translateX(100%); } }
+@keyframes vt-out-right { to   { transform: translateX(100%); } }
+@keyframes vt-in-left   { from { transform: translateX(-100%); } }
+@keyframes vt-out-down  { to   { transform: translateY(100%); } }
+@keyframes vt-in-top    { from { transform: translateY(-100%); } }
+@keyframes vt-out-up    { to   { transform: translateY(-100%); } }
+@keyframes vt-in-bottom { from { transform: translateY(100%); } }
+
+/* Honour reduced-motion: skip the slide, just swap. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.01ms !important;
+  }
+}

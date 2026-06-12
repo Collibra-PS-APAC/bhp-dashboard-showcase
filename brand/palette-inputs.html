@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BHP - Input components</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../css/fonts.css">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="palette.css">
+<link rel="stylesheet" href="transitions.css">
+<script src="transitions.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="backlink" href="palette-preview.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Back to palette</a>
+  <header class="head">
+    <div>
+      <div class="eyebrow">BHP Orange Theme System</div>
+      <h1>Input <span class="accent">components</span></h1>
+    </div>
+    <p class="sub">Buttons, search, dropdowns, and the date picker - every state built from the brand tokens. Orange leads each primary action; teal carries the secondary.</p>
+  </header>
+
+  <div class="section-label">Components · buttons · search · dropdowns · date pickers</div>
+  <div class="comp-grid">
+
+    <!-- Buttons -->
+    <div class="comp-card span2">
+      <div class="clabel"><span>Buttons</span><b>orange-led</b></div>
+      <div class="ctag">Variants</div>
+      <div class="crow">
+        <button class="ui-btn ui-btn--primary">Request access</button>
+        <button class="ui-btn ui-btn--primary is-hover">Hover</button>
+        <button class="ui-btn ui-btn--primary is-active">Active</button>
+        <button class="ui-btn ui-btn--secondary">Cancel</button>
+        <button class="ui-btn ui-btn--secondary is-hover">Cancel · hover</button>
+        <button class="ui-btn ui-btn--teal">Secondary</button>
+        <button class="ui-btn ui-btn--teal is-hover">Secondary hover</button>
+        <button class="ui-btn ui-btn--teal is-active">Secondary active</button>
+        <button class="ui-btn ui-btn--ghost">Learn more</button>
+        <button class="ui-btn ui-btn--disabled">Disabled</button>
+      </div>
+      <div class="ctag">Sizes &amp; icons</div>
+      <div class="crow">
+        <button class="ui-btn ui-btn--primary ui-btn--sm">Small</button>
+        <button class="ui-btn ui-btn--primary">Default</button>
+        <button class="ui-btn ui-btn--primary ui-btn--lg">Large</button>
+        <button class="ui-btn ui-btn--primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New request</button>
+        <button class="ui-btn ui-btn--secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export</button>
+        <button class="ui-btn ui-btn--primary ui-btn--icon" aria-label="Add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="comp-card span2">
+      <div class="clabel"><span>Search bar</span><b>orange button + focus ring</b></div>
+      <div class="ctag">Default</div>
+      <div class="crow"><div class="ui-search">
+        <div class="ui-field">
+          <svg class="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input class="ui-input" placeholder="Search BHP's data...">
+        </div>
+        <select class="ui-select"><option>All</option><option>Data Products</option><option>Datasets</option><option>Business Terms</option><option>Reports</option></select>
+        <button class="ui-btn ui-btn--primary">Search</button>
+      </div></div>
+      <div class="ctag">Focused</div>
+      <div class="crow"><div class="ui-search">
+        <div class="ui-field is-focus">
+          <svg class="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input class="ui-input" value="iron ore production">
+        </div>
+        <select class="ui-select"><option>Data Products</option></select>
+        <button class="ui-btn ui-btn--primary">Search</button>
+      </div></div>
+    </div>
+
+    <!-- Dropdowns -->
+    <div class="comp-card">
+      <div class="clabel"><span>Dropdowns</span><b>orange hover + select</b></div>
+      <div class="ctag">Select (closed)</div>
+      <div class="crow"><select class="ui-select" style="min-width:240px"><option>Filter by business unit</option></select></div>
+      <div class="ctag">Open menu</div>
+      <div class="crow"><div class="ui-menu">
+        <div class="mi">Operations</div>
+        <div class="mi hl">Minerals Australia</div>
+        <div class="mi sel">Petroleum <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="mi">Corporate</div>
+        <div class="mi">Marketing</div>
+      </div></div>
+      <div class="ctag">Multi-select</div>
+      <div class="crow"><div class="ui-multi">
+        <span class="ui-chip">Data Product <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+        <span class="ui-chip">FAIR <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+        <span class="ui-chip">Operations <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+        <span class="ph">Add filter...</span>
+      </div></div>
+    </div>
+
+    <!-- Date picker -->
+    <div class="comp-card">
+      <div class="clabel"><span>Date picker</span><b>orange today + range</b></div>
+      <div class="ctag">Field</div>
+      <div class="crow"><div class="ui-field" style="max-width:260px">
+        <svg class="lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+        <input class="ui-input" value="12 Jun 2026 - 18 Jun 2026">
+      </div></div>
+      <div class="ctag">Calendar</div>
+      <div class="crow"><div class="ui-cal">
+        <div class="cal-head">
+          <div class="cal-title">June 2026</div>
+          <div class="cal-nav">
+            <button aria-label="Previous"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button aria-label="Next"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>
+          </div>
+        </div>
+        <div class="cal-dow"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+        <div class="cal-days">
+          <div class="d">1</div><div class="d">2</div><div class="d today">3</div><div class="d">4</div><div class="d">5</div><div class="d">6</div><div class="d">7</div>
+          <div class="d">8</div><div class="d">9</div><div class="d">10</div><div class="d">11</div><div class="d start">12</div><div class="d range">13</div><div class="d range">14</div>
+          <div class="d range">15</div><div class="d range">16</div><div class="d range">17</div><div class="d end">18</div><div class="d">19</div><div class="d">20</div><div class="d">21</div>
+          <div class="d">22</div><div class="d">23</div><div class="d">24</div><div class="d">25</div><div class="d">26</div><div class="d">27</div><div class="d">28</div>
+          <div class="d">29</div><div class="d">30</div><div class="d mute">1</div><div class="d mute">2</div><div class="d mute">3</div><div class="d mute">4</div><div class="d mute">5</div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+
+  <div class="foot">BHP ORANGE #E65400 (DARKEST) · INPUT COMPONENTS · ORANGE LEADS · TEAL SECONDARY · GENERATED FOR the test instance</div>
+</div>
+</body>
+</html>

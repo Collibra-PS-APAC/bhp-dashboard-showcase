@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Privacy dashboard - hi-fi bento mockup</title>
+<link rel="stylesheet" href="../../css/fonts.css">
+<link rel="stylesheet" href="../../css/brand-tokens.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);color:var(--bhp-ink);background:var(--bhp-paper)}
+  :root{--deep:#A63D00;--err:#B42318;--ok:#0E7C86}
+
+  /* faux Collibra navy chrome, to show the dashboard sits below it */
+  .chrome{display:flex;align-items:center;gap:12px;background:#0B1F2A;color:#cfd6da;
+    padding:10px 24px;font-size:12px;letter-spacing:.04em}
+  .chrome b{color:#fff;font-weight:700;letter-spacing:.08em}
+  .chrome .sp{flex:1}
+  .chrome .me{width:26px;height:26px;border-radius:50%;background:#E65400;color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+
+  .page{max-width:1200px;margin:0 auto;padding:24px 28px 64px}
+
+  .bento{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+    grid-template-areas:
+      "head  head   head   head"
+      "hero  hero   search search"
+      "queue queue  queue  rail"
+      "dpia  dpia   dpia   dpia";}
+  .tile{background:#fff;border:1px solid var(--bhp-line);border-radius:16px;padding:18px;
+    transition:transform .18s,box-shadow .18s}
+  .tile:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(11,31,42,.10)}
+
+  /* header tile: identity + completion trend in one block */
+  .head{grid-area:head;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 20px}
+  .head .id .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--bhp-grey);font-weight:700}
+  .head .id h1{font-size:26px;font-weight:700;margin-top:3px}
+  .head .id h1 span{color:var(--bhp-orange)}
+  .head .trend{display:flex;align-items:center;gap:14px;min-width:300px}
+  .head .trend .lbl{text-align:right}
+  .head .trend .lbl b{display:block;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--bhp-grey)}
+  .head .trend .lbl small{font-size:11px;color:var(--bhp-grey);opacity:.8}
+  .head .trend .spark{width:230px;height:54px}
+
+  /* hero metric tile (orange gradient) */
+  .hero{grid-area:hero;border:none;color:#fff;position:relative;overflow:hidden;
+    background:linear-gradient(135deg,#FF7A33,var(--bhp-orange) 55%,#C4470A);
+    display:flex;flex-direction:column;justify-content:center}
+  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.22),transparent 55%)}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.9);font-weight:700}
+  .hero .big{font-size:72px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:6px 0 2px}
+  .hero .cap{font-size:14px;color:rgba(255,255,255,.95)}
+  .hero .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .hero .pills span{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);
+    border-radius:999px;padding:5px 12px;font-size:12.5px;color:#fff}
+  .hero .pills span b{font-weight:700}
+
+  /* search tile - mirrors the landing page: underline bar + ghost button + scope pills */
+  .search{grid-area:search;display:flex;flex-direction:column;justify-content:center}
+  .search h2{font-size:13px;font-weight:700;margin-bottom:6px;color:var(--bhp-slate)}
+  .csearch{display:flex;align-items:center;gap:14px;border-bottom:2px solid var(--bhp-ink);padding:10px 2px}
+  .csearch svg{width:22px;height:22px;color:var(--bhp-ink);flex-shrink:0}
+  .csearch input{flex:1;min-width:0;padding:4px 0;border:0;outline:0;background:transparent;font:inherit;
+    font-size:.95rem;color:var(--bhp-ink)}
+  .csearch input::placeholder{color:var(--bhp-grey)}
+  .csearch button{margin:0;padding:6px 14px;border:1px solid transparent;border-radius:6px;background:transparent;
+    color:var(--bhp-orange);font:inherit;font-size:.78rem;font-weight:var(--font-weight-medium);
+    text-transform:uppercase;letter-spacing:.16em;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+  .csearch button:hover{border-color:var(--bhp-orange);background:var(--bhp-orange-wash)}
+  .scope{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .scope span{padding:4px 12px;border:1px solid var(--bhp-line);border-radius:20px;font-size:.78rem;
+    color:var(--bhp-slate);cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
+  .scope span:hover{border-color:var(--bhp-ink);color:var(--bhp-ink)}
+  .scope span.on,.scope span.on:hover{background:var(--bhp-ink);color:#fff;border-color:var(--bhp-ink)}
+
+  /* section heads */
+  .sh{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .sh h2{font-size:15px;font-weight:700}
+  .sh .meta{font-size:12px;color:var(--bhp-grey)}
+
+  /* queue tile */
+  .queue{grid-area:queue}
+  .filter{position:relative}
+  .filter .btn{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--bhp-line);
+    background:#fff;border-radius:10px;padding:8px 13px;font-size:13px;color:var(--bhp-slate);
+    font-family:var(--font-body);cursor:pointer;transition:border-color .15s}
+  .filter .btn:hover{border-color:var(--bhp-orange)}
+  .filter .btn b{color:var(--bhp-ink)}
+  .filter .btn .cv{width:7px;height:7px;border-right:2px solid var(--bhp-grey);border-bottom:2px solid var(--bhp-grey);transform:rotate(45deg);margin-top:-3px}
+  .menu{position:absolute;right:0;top:calc(100% + 6px);z-index:20;background:#fff;border:1px solid var(--bhp-line);
+    border-radius:12px;box-shadow:0 14px 30px rgba(11,31,42,.14);padding:8px;min-width:240px;display:none}
+  .menu.open{display:block}
+  .menu label{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:8px;font-size:13px;cursor:pointer}
+  .menu label:hover{background:var(--bhp-orange-wash)}
+  .menu input{accent-color:var(--bhp-orange);width:15px;height:15px}
+
+  .grp{margin-top:14px}
+  .grp:first-of-type{margin-top:2px}
+  .grp .gh{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--bhp-slate);
+    text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+  .grp .gh.over{color:var(--err)}
+  .grp .gh .n{color:var(--bhp-grey);font-weight:400}
+  .ti{display:flex;align-items:center;gap:12px;padding:12px 12px;border:1px solid var(--bhp-line);
+    border-radius:12px;margin-bottom:8px;cursor:pointer;transition:background .15s,border-color .15s}
+  .ti:hover{background:var(--bhp-orange-wash);border-color:var(--bhp-orange-tint)}
+  .ti .wid{font-size:11.5px;color:var(--bhp-grey);width:96px;flex:none;font-variant-numeric:tabular-nums}
+  .ti .t{flex:1;font-size:13.5px;font-weight:500}
+  .chip{font-size:11.5px;border:1px solid var(--bhp-line);border-radius:999px;padding:2px 11px;
+    color:var(--bhp-slate);background:var(--bhp-paper);white-space:nowrap}
+  .due{font-size:12px;color:var(--bhp-grey);width:78px;text-align:right;flex:none}
+  .due.over{color:var(--err);font-weight:700}
+
+  /* rail: unassigned + DSAR */
+  .rail{grid-area:rail;background:#FBFAF8}
+  .rail .ti{background:#fff}
+  .dsar-div{display:flex;align-items:center;gap:10px;margin:16px 0 10px;color:var(--bhp-grey);
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+  .dsar-div::before,.dsar-div::after{content:"";flex:1;height:1px;background:var(--bhp-line)}
+  .dsar{border:1px dashed var(--bhp-line);border-radius:12px;background:repeating-linear-gradient(45deg,#fbfaf8,#fbfaf8 9px,#f4f2ee 9px,#f4f2ee 18px);
+    padding:18px;text-align:center;color:var(--bhp-grey);font-size:13px}
+  .dsar b{color:var(--bhp-slate)}.dsar small{display:block;margin-top:4px;font-size:11.5px;opacity:.85}
+
+  /* dpia tile */
+  .dpia{grid-area:dpia}
+  .dpia .body{display:flex;align-items:center;gap:30px;flex-wrap:wrap}
+  .dpia .donut{width:200px;flex:none}
+  .dpia .key{display:flex;flex-direction:column;gap:10px}
+  .dpia .key .r{display:flex;align-items:center;gap:10px;font-size:13.5px}
+  .dpia .key .sw{width:12px;height:12px;border-radius:3px}
+  .dpia .key .ct{font-weight:700;font-variant-numeric:tabular-nums}
+  .dpia .key .pc{color:var(--bhp-grey);font-size:12px}
+  .dpia .note{flex:1;min-width:220px;background:var(--bhp-paper);border:1px solid var(--bhp-line);
+    border-radius:12px;padding:16px 18px;font-size:13px;color:var(--bhp-slate)}
+  .dpia .note b{color:var(--bhp-ink)}
+
+  .rise{opacity:0;transform:translateY(14px);animation:rise .55s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.rise{animation:none;opacity:1;transform:none}}
+
+  @media (max-width:980px){
+    .bento{grid-template-columns:1fr;grid-template-areas:"head" "hero" "search" "queue" "rail" "dpia";}
+    .head{flex-direction:column;align-items:flex-start;gap:14px}
+    .head .trend{min-width:0;width:100%;justify-content:space-between}
+  }
+</style>
+</head>
+<body>
+  <div class="chrome"><b>BHP</b><span>Collibra Data Intelligence Platform</span><span class="sp"></span><span>Data Privacy</span><span class="me">SD</span></div>
+
+  <main class="page">
+    <div class="bento">
+
+      <!-- header: identity + completion trend -->
+      <section class="tile head rise">
+        <div class="id">
+          <div class="eyebrow">Data Privacy</div>
+          <h1>Hi <span>Shane</span></h1>
+        </div>
+        <div class="trend">
+          <div class="lbl"><b>Completion trend</b><small>work items completed per month</small></div>
+          <div class="spark" id="spark"></div>
+        </div>
+      </section>
+
+      <!-- hero metric -->
+      <section class="tile hero rise" style="animation-delay:.05s">
+        <div class="eyebrow">My open work items</div>
+        <div class="big" id="openCount">0</div>
+        <div class="cap">assigned to you, still open</div>
+        <div class="pills">
+          <span>To Do <b>1</b></span>
+          <span>In Progress <b>2</b></span>
+          <span>Blocked <b>1</b></span>
+          <span>Reviewed <b>1</b></span>
+        </div>
+      </section>
+
+      <!-- scoped search -->
+      <section class="tile search rise" style="animation-delay:.1s">
+        <h2>Search the catalog</h2>
+        <form class="csearch" role="search" autocomplete="off" onsubmit="return false">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search the data catalog" aria-label="Search the data catalog">
+          <button type="submit">Search</button>
+        </form>
+        <div class="scope" id="searchScope" role="group" aria-label="Limit search to an asset type">
+          <span class="on" role="button" tabindex="0" data-scope="dataConcept">Business Data Concepts</span>
+          <span role="button" tabindex="0" data-scope="dpia">DPIAs</span>
+          <span role="button" tabindex="0" data-scope="all">All assets</span>
+        </div>
+      </section>
+
+      <!-- my work item queue -->
+      <section class="tile queue rise" style="animation-delay:.15s">
+        <div class="sh">
+          <h2>My work item queue</h2>
+          <div class="filter">
+            <button class="btn" id="filterBtn">Work Item Type: <b>All types</b> <span class="cv"></span></button>
+            <div class="menu" id="filterMenu">
+              <label><input type="checkbox" checked> Action Tracking</label>
+              <label><input type="checkbox" checked> Data Map Updates</label>
+              <label><input type="checkbox" checked> DPIA</label>
+              <label><input type="checkbox" checked> Enquiry</label>
+              <label><input type="checkbox" checked> Incident Investigation</label>
+              <label><input type="checkbox" checked> Other</label>
+              <label><input type="checkbox" checked> Policy Review/Management</label>
+              <label><input type="checkbox" checked> Reporting</label>
+              <label><input type="checkbox" checked> Support Request</label>
+              <label><input type="checkbox" checked> Training and Awareness</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="grp">
+          <div class="gh over">Overdue <span class="n">(1)</span></div>
+          <div class="ti"><span class="wid">DP-INC-0103</span><span class="t">Investigate access-log anomaly</span><span class="chip">Incident Investigation</span><span class="due over">Overdue</span></div>
+        </div>
+        <div class="grp">
+          <div class="gh">This week <span class="n">(3)</span></div>
+          <div class="ti"><span class="wid">DP-ENQ-0102</span><span class="t">Respond to marketing data query</span><span class="chip">Enquiry</span><span class="due">Fri</span></div>
+          <div class="ti"><span class="wid">DP-DPI-0101</span><span class="t">Review DPIA for vendor onboarding</span><span class="chip">DPIA</span><span class="due">Sat</span></div>
+          <div class="ti"><span class="wid">DP-ACT-0104</span><span class="t">Track remediation owners for Q2 findings</span><span class="chip">Action Tracking</span><span class="due">Tue</span></div>
+        </div>
+        <div class="grp">
+          <div class="gh">This month <span class="n">(1)</span></div>
+          <div class="ti"><span class="wid">DP-MAP-0105</span><span class="t">Update data map for Potash finance</span><span class="chip">Data Map Updates</span><span class="due">20 Jun</span></div>
+        </div>
+      </section>
+
+      <!-- unassigned + DSAR -->
+      <section class="tile rail rise" style="animation-delay:.2s">
+        <div class="sh"><h2>Unassigned</h2><span class="meta">no Assignee</span></div>
+        <div class="ti"><span class="t">Annual data-breach simulation</span><span class="chip">Other</span></div>
+        <div class="ti"><span class="t">Q2 privacy reporting pack</span><span class="chip">Reporting</span></div>
+        <div class="ti"><span class="t">DSAR intake support</span><span class="chip">Support Request</span></div>
+
+        <div class="dsar-div">DSAR</div>
+        <div class="dsar"><b>DSAR queue: coming soon</b><small>no Data Subject Access Request asset type on the dev instance yet</small></div>
+      </section>
+
+      <!-- dpia status -->
+      <section class="tile dpia rise" style="animation-delay:.25s">
+        <div class="sh"><h2>DPIA status</h2><span class="meta">713 assessments</span></div>
+        <div class="body">
+          <div class="donut" id="donut"></div>
+          <div class="key">
+            <div class="r"><span class="sw" style="background:#E65400"></span> Completed <span class="ct">604</span> <span class="pc">85%</span></div>
+            <div class="r"><span class="sw" style="background:#0E7C86"></span> Not Required <span class="ct">106</span> <span class="pc">15%</span></div>
+            <div class="r"><span class="sw" style="background:#FF8A4D"></span> In Progress <span class="ct">1</span> <span class="pc">&lt;1%</span></div>
+            <div class="r"><span class="sw" style="background:#3D4F5C"></span> Unknown <span class="ct">2</span> <span class="pc">&lt;1%</span></div>
+          </div>
+          <div class="note">Most assessments are <b>Completed</b>. Only <b>1 is In Progress</b>, so the privacy team's DPIA backlog is effectively clear. Live from the DPIA domain.</div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="../../vendor/apexcharts.min.js"></script>
+  <script src="../../js/apex-bhp-theme.js"></script>
+  <script src="helpers.js"></script>
+  <script>
+    // Work-item-type filter menu (demo toggle).
+    var fb = document.getElementById('filterBtn'), fm = document.getElementById('filterMenu');
+    fb.addEventListener('click', function(){ fm.classList.toggle('open'); });
+    document.addEventListener('click', function(e){
+      if(!fb.contains(e.target) && !fm.contains(e.target)) fm.classList.remove('open');
+    });
+
+    // Search-scope pills: single-select, like the landing page.
+    var scope = document.getElementById('searchScope');
+    scope.addEventListener('click', function(e){
+      var pill = e.target.closest('[data-scope]'); if(!pill) return;
+      scope.querySelectorAll('span').forEach(function(s){ s.classList.remove('on'); });
+      pill.classList.add('on');
+    });
+
+    function render(){
+      if(!window.ApexCharts || !window.BHPApex) return;
+
+      DUTIL.countUp('#openCount', 5);
+
+      // Completion trend: work items completed each month over the last 12 months
+      // (illustrative monthly series; wired live it buckets Date Closed by month).
+      var months = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+      new ApexCharts(document.querySelector('#spark'), BHPApex.sparkline({
+        series:[{name:'Completed', data:[2,3,1,4,2,3,4,2,5,3,4,5]}],
+        height:54,
+        color:BHPApex.tokens.ORANGE,
+        extra:{
+          xaxis:{ categories:months },
+          markers:{ size:0, hover:{ size:4 } },
+          tooltip:{ x:{ show:true }, y:{ formatter:function(v){ return v + ' completed'; } }, marker:{ show:false } }
+        }
+      })).render();
+
+      // DPIA status donut (real distribution), on the brand palette.
+      new ApexCharts(document.querySelector('#donut'), BHPApex.base ? Object.assign(BHPApex.base(), {
+        chart:{ type:'donut', height:200, fontFamily:'Arial, sans-serif' },
+        series:[604,106,1,2],
+        labels:['Completed','Not Required','In Progress','Unknown'],
+        colors:['#E65400','#0E7C86','#FF8A4D','#3D4F5C'],
+        legend:{ show:false },
+        dataLabels:{ enabled:false },
+        stroke:{ width:2, colors:['#fff'] },
+        plotOptions:{ pie:{ donut:{ size:'68%' } } },
+        tooltip:{ y:{ formatter:function(v){ return v + ' assessments'; } } }
+      }) : {}).render();
+    }
+    if(document.readyState!=='loading') render(); else window.addEventListener('DOMContentLoaded', render);
+  </script>
+</body>
+</html>

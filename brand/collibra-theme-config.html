@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BHP — Collibra Theme Config</title>
+<link rel="stylesheet" href="../css/fonts.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="transitions.css">
+<script src="transitions.js"></script>
+<style>
+  :root{
+    --bhp-orange:#E65400;--orange-deep:#C24A00;--orange-hover:#FF6A1A;--orange-active:#FF7A33;
+    --orange-light:#FF8A4D;--orange-tint:#FFB489;--orange-pale:#FFE0CE;--orange-wash:#FFF4EC;
+    --ink:#0B1F2A;--slate:#3D4F5C;--grey:#6B7B86;--line:#E4E1DC;--paper:#F7F5F2;
+    --teal:#0E7C86;--teal-dark:#0A5A61;--teal-light:#3FA9B3;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:Arimo,Arial,Helvetica,sans-serif;background:var(--ink);color:#EAF1F4;
+    -webkit-font-smoothing:antialiased;padding:64px 56px 80px;
+    background-image:radial-gradient(900px 500px at 88% -8%, rgba(230,84,0,.20), transparent 60%),radial-gradient(700px 460px at -6% 108%, rgba(14,124,134,.16), transparent 55%);
+  }
+  .wrap{max-width:1100px;margin:0 auto}
+  .pager{display:flex;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;margin-bottom:30px}
+  .pager a{color:#9DB0BB;text-decoration:none;border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:6px 14px}
+  .pager a.on{color:#fff;border-color:var(--bhp-orange);background:rgba(230,84,0,.16)}
+  header.head{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;border-bottom:1px solid rgba(255,255,255,.10);padding-bottom:28px;margin-bottom:30px}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--orange-light);margin-bottom:14px}
+  h1{font-family:Arimo,Arial,sans-serif;font-weight:700;font-size:46px;line-height:1;letter-spacing:-.015em}
+  h1 .accent{color:var(--bhp-orange)}
+  .sub{color:#9DB0BB;font-size:14px;max-width:380px;text-align:right;line-height:1.5}
+  .banner{display:flex;gap:10px;align-items:center;background:rgba(230,84,0,.10);border:1px solid rgba(230,84,0,.35);color:#FFD9C2;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:40px}
+  .banner b{color:#fff}
+
+  .section-label{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.20em;text-transform:uppercase;color:#7C8E99;margin:40px 0 16px;display:flex;align-items:center;gap:14px}
+  .section-label::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.08)}
+  .section-label b{color:var(--bhp-orange);font-weight:600}
+
+  table.cfg{width:100%;border-collapse:collapse;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden}
+  table.cfg + table.cfg{margin-top:14px}
+  .cfg th,.cfg td{text-align:left;padding:12px 16px;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,.06);vertical-align:middle}
+  .cfg th{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7C8E99;background:rgba(0,0,0,.18)}
+  .cfg td.field{color:#CBD8DF;font-weight:500;width:34%}
+  .cfg td.val{font-family:'IBM Plex Mono',monospace;color:#EAF1F4;white-space:nowrap}
+  .cfg td.note{color:#8298A4;font-size:12.5px}
+  .cfg tr:last-child td{border-bottom:none}
+  .dot{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-3px;margin-right:9px;border:1px solid rgba(255,255,255,.18)}
+  .grp{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-light);padding:14px 16px 6px;display:block}
+  .cap{caption-side:top;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-light);padding:12px 16px 0}
+  .pill{font-family:'IBM Plex Mono',monospace;font-size:11px;background:rgba(255,255,255,.08);color:#B9C7CF;border-radius:5px;padding:2px 8px;margin-left:8px}
+  .note-box{color:#8298A4;font-size:12.5px;line-height:1.55;margin-top:12px;padding-left:2px}
+  .note-box b{color:#CBD8DF}
+  code{font-family:'IBM Plex Mono',monospace;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:5px;font-size:12px;color:#EAF1F4}
+  .foot{margin-top:46px;color:#6B7B86;font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="pager">
+    <a href="palette-preview.html">Palette &amp; components</a>
+    <a class="on" href="collibra-theme-config.html">Collibra config</a>
+  </div>
+
+  <header class="head">
+    <div>
+      <div class="eyebrow">Settings → General → Customizations → Custom theme</div>
+      <h1>Collibra Theme <span class="accent">Config</span></h1>
+    </div>
+    <p class="sub">Exact values to enter in the the test instance Custom Theme page. Apply top to bottom.</p>
+  </header>
+
+  <div class="banner"><span>⚠</span><div>Needs the <b>System administration</b> global permission. Changes here affect Collibra for <b>every user</b>. Tick <b>I agree</b> and click <b>Save customizations</b> when done.</div></div>
+
+  <div class="section-label">1 · Logo, icon &amp; favicon <span class="pill">SVG upload, &lt; 50 KB</span></div>
+  <table class="cfg">
+    <thead><tr><th>Slot</th><th>Upload this file</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td class="field">Logo on light</td><td class="val">Orange logo files/…/bhp_orn_rgb_pos.svg</td><td class="note">Orange wordmark on light surfaces</td></tr>
+      <tr><td class="field">Logo on dark</td><td class="val">Inverted logo files/bhp_white_transparent.svg</td><td class="note">White wordmark for the navy top nav (288×40px space)</td></tr>
+      <tr><td class="field">Icon on light</td><td class="val">Inverted logo files/bhp_white_on_orange_rounded.svg</td><td class="note">Rounded orange badge works on light or dark</td></tr>
+      <tr><td class="field">Icon on dark</td><td class="val">Inverted logo files/bhp_white_on_orange_rounded.svg</td><td class="note">Same badge</td></tr>
+      <tr><td class="field">Favicon <span class="pill">ICO/SVG &lt; 100 KB</span></td><td class="val">Inverted logo files/bhp_white_on_orange_rounded.svg</td><td class="note">Browser-tab mark</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">2 · Header colour</div>
+  <table class="cfg">
+    <thead><tr><th>Field</th><th>Value</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td class="field">Header colour</td><td class="val"><span class="dot" style="background:#0B1F2A"></span>Collibra (default) — navy</td><td class="note">Header takes no custom hex; navy + the white-on-orange logo + orange accents is the strongest BHP look</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">3 · Quick color select tool</div>
+  <table class="cfg">
+    <caption class="cap">Primary</caption>
+    <thead><tr><th>Field</th><th>Value</th><th>Token</th></tr></thead>
+    <tbody>
+      <tr><td class="field">Main</td><td class="val"><span class="dot" style="background:#E65400"></span>#E65400</td><td class="note">BHP Orange</td></tr>
+      <tr><td class="field">Dark</td><td class="val"><span class="dot" style="background:#E65400"></span>#E65400</td><td class="note">Same as Main — the brand never darkens (see note)</td></tr>
+      <tr><td class="field">Light</td><td class="val"><span class="dot" style="background:#FF8A4D"></span>#FF8A4D</td><td class="note">Orange light</td></tr>
+      <tr><td class="field">Contrast text</td><td class="val"><span class="dot" style="background:#FFFFFF"></span>#FFFFFF</td><td class="note">White</td></tr>
+    </tbody>
+  </table>
+  <table class="cfg">
+    <caption class="cap">Secondary</caption>
+    <thead><tr><th>Field</th><th>Value</th><th>Token</th></tr></thead>
+    <tbody>
+      <tr><td class="field">Main</td><td class="val"><span class="dot" style="background:#0E7C86"></span>#0E7C86</td><td class="note">Teal</td></tr>
+      <tr><td class="field">Dark</td><td class="val"><span class="dot" style="background:#0A5A61"></span>#0A5A61</td><td class="note">Teal dark</td></tr>
+      <tr><td class="field">Light</td><td class="val"><span class="dot" style="background:#3FA9B3"></span>#3FA9B3</td><td class="note">Teal light</td></tr>
+      <tr><td class="field">Contrast text</td><td class="val"><span class="dot" style="background:#FFFFFF"></span>#FFFFFF</td><td class="note">White</td></tr>
+    </tbody>
+  </table>
+  <p class="note-box"><b>On the Primary "Dark" field:</b> Collibra would use this as a darker hover/pressed shade by default. Because the brand brightens on interaction (orange <code>#E65400</code> is the darkest shade), set Dark equal to Main and define the brighter hover/active explicitly under Components below.</p>
+
+  <div class="section-label">4 · Components <span class="pill">overrides Quick color select</span></div>
+  <table class="cfg">
+    <thead><tr><th>Component</th><th>Field → value</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td class="field">Primary button</td><td class="val">Background <span class="dot" style="background:#E65400"></span>#E65400 · Hover <span class="dot" style="background:#FF6A1A"></span>#FF6A1A · Active <span class="dot" style="background:#FF7A33"></span>#FF7A33 · Text <span class="dot" style="background:#FFFFFF"></span>#FFFFFF</td><td class="note">Solid BHP Orange; brightens on hover / press</td></tr>
+      <tr><td class="field">Primary button on dark</td><td class="val">Background <span class="dot" style="background:#FF8A4D"></span>#FF8A4D · Hover <span class="dot" style="background:#FFB489"></span>#FFB489 · Active <span class="dot" style="background:#FF6A1A"></span>#FF6A1A · Text <span class="dot" style="background:#0B1F2A"></span>#0B1F2A</td><td class="note">Lighter orange pops on navy; ink text for contrast</td></tr>
+      <tr><td class="field">Secondary button</td><td class="val" style="white-space:normal;line-height:2">Outline &amp; text <span class="dot" style="background:#0E7C86"></span>#0E7C86 · Hover <span class="dot" style="background:#B8E5EA"></span>#B8E5EA · Active <span class="dot" style="background:#083F45"></span>#083F45 · Active text <span class="dot" style="background:#FFFFFF"></span>#FFFFFF</td><td class="note">Teal outline button: light-teal hover fill, deep-teal pressed with white text</td></tr>
+      <tr><td class="field">Secondary button on dark</td><td class="val" style="white-space:normal;line-height:2">Outline &amp; text <span class="dot" style="background:#3EC3D2"></span>#3EC3D2 · Hover <span class="dot" style="background:#083F45"></span>#083F45 · Active <span class="dot" style="background:#083F45"></span>#083F45 · Active text <span class="dot" style="background:#FFFFFF"></span>#FFFFFF</td><td class="note">Bright-teal outline on navy; deep-teal hover and pressed with white text</td></tr>
+      <tr><td class="field">Tabs</td><td class="val">Active tab <span class="dot" style="background:#E65400"></span>#E65400</td><td class="note">Orange active indicator</td></tr>
+      <tr><td class="field">Tabs on dark</td><td class="val">Active tab <span class="dot" style="background:#FF8A4D"></span>#FF8A4D</td><td class="note">Lighter orange on navy</td></tr>
+      <tr><td class="field">Switch</td><td class="val">Background <span class="dot" style="background:#E65400"></span>#E65400 · Hover <span class="dot" style="background:#FF6A1A"></span>#FF6A1A</td><td class="note">Orange on, brighten on hover</td></tr>
+      <tr><td class="field">Stepper</td><td class="val" style="white-space:normal;line-height:2">Active icon background <span class="dot" style="background:#E65400"></span>#E65400 · Active icon text <span class="dot" style="background:#FFFFFF"></span>#FFFFFF · Completed icon background <span class="dot" style="background:#0E7C86"></span>#0E7C86 · Completed icon text <span class="dot" style="background:#FFFFFF"></span>#FFFFFF · Hover background <span class="dot" style="background:#FFF4EC"></span>#FFF4EC</td><td class="note">Orange current step, teal completed steps, orange-wash hover</td></tr>
+      <tr><td class="field">Date picker</td><td class="val" style="white-space:normal;line-height:2">Selected background <span class="dot" style="background:#E65400"></span>#E65400 · Selected text <span class="dot" style="background:#FFFFFF"></span>#FFFFFF · Selected hover / focus <span class="dot" style="background:#E65400"></span>#E65400 · Today border <span class="dot" style="background:#E65400"></span>#E65400 · Range <span class="dot" style="background:#FFB489"></span>#FFB489 · Range text <span class="dot" style="background:#615555"></span>#615555</td><td class="note">Orange selected date and today ring; orange-tint range with warm-grey text</td></tr>
+    </tbody>
+  </table>
+  <p class="note-box">Components <b>override</b> Quick color select for the components listed, so set them here when you want exact control. Anything not listed inherits the Quick color select values above. The primary button is a solid orange fill that brightens on hover and active, since <code>#E65400</code> is the darkest shade. The secondary button is a teal <b>outline</b>: transparent at rest with teal outline and text, a light-teal fill on hover, and a deep-teal <code>#083F45</code> fill with white text when pressed. Field labels follow the live the test instance UI (Collibra 2026.05) and may shift slightly in later releases.</p>
+
+  <div class="foot">BHP ORANGE #E65400 · DOLLEY-PS CUSTOM THEME · APPLY WITH SYSTEM ADMINISTRATION PERMISSION</div>
+</div>
+</body>
+</html>
