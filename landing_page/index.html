@@ -15,6 +15,19 @@
       /* Showcase-only: the persona tiles sit in a row above the KPI line. */
       .wrap .persona-tiles { display: flex; flex-wrap: wrap; gap: 14px; margin: 26px 0 4px; }
       .wrap .persona-tiles .dlm-tile { flex: 1 1 320px; max-width: 460px; margin-top: 0; }
+      /* Join the entrance cascade between the scope pills (0.78s) and the KPI
+         line (0.98s), with a small left-to-right stagger across the two tiles. */
+      @media (prefers-reduced-motion: no-preference) {
+        .wrap.is-ready .persona-tiles .dlm-tile {
+          animation: landing-riseIn 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) 0.86s both;
+        }
+        .wrap.is-ready .persona-tiles .dlm-tile:nth-child(2) { animation-delay: 0.93s; }
+      }
+      /* Mobile reorders the page with explicit flex orders; keep the tiles
+         directly under the hero block. */
+      @media (max-width: 900px) {
+        .wrap .persona-tiles { order: 1; }
+      }
     </style>
 </head>
 <body>
