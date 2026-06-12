@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- BHP logo, white letters on a transparent background. For placing over any orange (or dark) section. Derived from the official bhp_orn_rgb_pos.svg. -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 369.5 204.1" style="enable-background:new 0 0 369.5 204.1;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+</style>
+<path id="XMLID_22_" class="st0" d="M318.4,83.2c0,17.8-14.4,32.2-32.2,32.2h-21.8v37.6h-25.1V51h46.9C304,51,318.4,65.5,318.4,83.2
+	z M282.2,72.1h-17.7v21h17.7c5.6,0,10.1-5,10.1-10.5C292.2,77,287.7,72.1,282.2,72.1z M199.1,51v41.2h-34.9V51h-25.1v102h25.1v-37.6
+	h34.9v37.6h25.1V51H199.1z M129.2,125.3c0,16.8-15,27.8-31.3,27.8H51V51h45.3c16.6,0,30.4,12.2,30.4,27.3c0,11.9-5.6,18.3-13.3,23.2
+	C122.4,105.3,129.2,111.1,129.2,125.3z M92.9,111.9H76.1v19.7h16.8c6.5,0,10.1-4.4,10.1-9.8C102.9,116.3,98.4,111.9,92.9,111.9z
+	 M90.4,72.1H76.1v21h14.3c6.6,0,10.1-5,10.1-10.5C100.5,77,97.1,72.1,90.4,72.1z"/>
+</svg>

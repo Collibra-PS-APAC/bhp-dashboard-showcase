@@ -3,7 +3,10 @@
 A static showcase of a custom Collibra dashboard styled to BHP brand guidelines,
 built by Collibra Professional Services APAC as a proof of concept.
 
-**Live demo:** the Data Privacy persona dashboard, served from `data_privacy/`.
+**Live demo:** starts on the BHP Data Catalog landing page (`landing_page/`),
+with tiles through to the Data Lifecycle Management preview (`dlm/`) and the
+full Data Privacy persona dashboard (`data_privacy/`). A Data Utilities preview
+stub (`data_utilities/`) is also included.
 
 This copy is fully self-contained. All data is fictional and generated in the
 page at load time; nothing here talks to a Collibra instance. The production

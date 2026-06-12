@@ -1,0 +1,113 @@
+/* Persona stub-page shell (REQ-009).
+   Shared layout for the data_utilities, data_privacy, and dlm stub pages: the
+   branded placeholders the router auto-navigates to (Utilities, Privacy) or the
+   DLM tile links to. Stubs make no API calls; they only show the BHP brand, the
+   persona heading and descriptor, a few preview cards, and a link back to the
+   landing. All colours, fonts, and weights come from css/brand-tokens.css. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+  background: var(--bhp-paper);
+}
+
+.stub-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 28px;
+}
+
+.stub-body__heading {
+  margin: 0 0 8px;
+  font-size: 1.9rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.stub-body__desc {
+  max-width: 560px;
+  margin: 0 0 28px;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+
+/* Preview cards: a static glimpse of the persona's real dashboard components. */
+.stub-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stub-card {
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.stub-card__title {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.stub-card__text {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.stub-card__tag {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: var(--bhp-orange-wash);
+  color: #A63D00;
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-medium);
+}
+
+/* Back to the general landing. */
+.stub-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--bhp-orange);
+  text-decoration: none;
+}
+
+.stub-back:hover,
+.stub-back:focus-visible {
+  text-decoration: underline;
+}
+
+.stub-back:focus-visible {
+  outline: 2px solid var(--bhp-orange);
+  outline-offset: 2px;
+}
+
+.stub-back__icon {
+  width: 16px;
+  height: 16px;
+}

@@ -1,0 +1,953 @@
+/* BHP Data Catalog landing page.
+   Layout and components only; all colours, fonts, and weights come from
+   css/brand-tokens.css. Anchored on BHP Orange #E65400.
+   The page embeds inside Collibra's own chrome, so it carries no header
+   and sits on a white background. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+  background: #ffffff;
+}
+
+/* --- Loading overlay (REQ-018) ---
+   Covers the page on load, before the router resolves, so no one sees unpainted
+   or half-painted content. Navy fill, BHP logo, teal spinner. Visible by
+   default in the markup; hideLoadingOverlay() adds .is-hidden once routing
+   completes, fading it out and letting clicks through again. */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  background: var(--bhp-ink);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.loading-overlay.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-overlay__logo {
+  height: 32px;
+  width: auto;
+}
+
+.loading-overlay__spinner {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 3.5px solid rgba(255, 255, 255, 0.14);
+  border-top-color: var(--bhp-teal-light);
+  animation: loading-overlay-spin 0.9s linear infinite;
+}
+
+.loading-overlay__text {
+  margin: 0;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  color: #9db0bb;
+}
+
+@keyframes loading-overlay-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Respect users who prefer no motion: hold the spinner still. */
+@media (prefers-reduced-motion: reduce) {
+  .loading-overlay__spinner {
+    animation: none;
+  }
+}
+
+/* --- Routing interstitial (REQ-012) ---
+   Brief hand-off shown before auto-navigating Utilities/Privacy users to their
+   own dashboard, so the move reads as deliberate rather than an abrupt jump.
+   Hidden by default; showInterstitial() reveals it and resolves after a short
+   minimum so the card is never just a flash. */
+.routing-interstitial {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(11, 31, 42, 0.55);
+}
+
+/* Attribute selector wins over the display:flex above, so hidden truly hides. */
+.routing-interstitial[hidden] {
+  display: none;
+}
+
+.routing-interstitial__card {
+  width: 100%;
+  max-width: 430px;
+  padding: 30px 30px 26px;
+  background: #ffffff;
+  border: 1px solid var(--bhp-line);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(11, 31, 42, 0.24);
+  text-align: center;
+}
+
+/* The card takes programmatic focus on show; only suppress the ring for that
+   case, so a keyboard user still gets a visible focus indicator. */
+.routing-interstitial__card:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.routing-interstitial__heading {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--bhp-ink);
+}
+
+.routing-interstitial__message {
+  margin: 0 0 20px;
+  min-height: 1.2em;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.routing-interstitial__bar {
+  height: 6px;
+  border-radius: 6px;
+  background: var(--bhp-orange-wash);
+  overflow: hidden;
+}
+
+/* Indeterminate sweep: a short fill that slides across the track. */
+.routing-interstitial__bar::after {
+  content: "";
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-primary), var(--bhp-orange-light));
+  animation: routing-interstitial-progress 1.2s ease-in-out infinite;
+}
+
+@keyframes routing-interstitial-progress {
+  0%   { transform: translateX(-110%); }
+  100% { transform: translateX(360%); }
+}
+
+/* Reduced motion: hold a full, static bar instead of the sweep. */
+@media (prefers-reduced-motion: reduce) {
+  .routing-interstitial__bar::after {
+    width: 100%;
+    animation: none;
+  }
+}
+
+/* --- Editorial general landing (Task 18) ---
+   The general landing renders inside .wrap. Every rule below is scoped under
+   .wrap so the editorial layout never collides with the global overlay /
+   interstitial / notice components. Ported from the approved Concept 2 mockup. */
+.wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 52px 32px 64px;
+}
+
+/* Hero (left) + search (right) */
+.wrap .top {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 56px;
+  align-items: end;
+}
+.wrap .eyebrow {
+  margin: 0 0 14px;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bhp-orange);
+  font-weight: var(--font-weight-medium);
+}
+.wrap .hero__greeting {
+  margin: 0;
+  max-width: none;
+  font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-weight: var(--font-weight-bold);
+  color: var(--bhp-ink);
+}
+.wrap .hero__greeting .muted {
+  color: var(--bhp-grey);
+  font-weight: var(--font-weight-regular);
+}
+.wrap .hero__greeting #userFirstName {
+  color: inherit;
+}
+.wrap .rule {
+  height: 3px;
+  width: 96px;
+  background: var(--bhp-orange);
+  margin: 24px 0 0;
+}
+.wrap .lede {
+  margin: 18px 0 0;
+  max-width: 46ch;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.wrap .lede #assetCount {
+  color: var(--bhp-ink);
+  font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.wrap .lede #assetCount.is-updated {
+  color: var(--bhp-orange);
+}
+
+/* Search: a wide underlined field with an uppercase outline-on-hover button */
+.wrap .search {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: auto;
+  max-width: none;
+  height: auto;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid var(--bhp-ink);
+  border-radius: 0;
+  overflow: visible;
+  padding: 10px 2px;
+}
+.wrap .search .search__icon {
+  margin: 0;
+  width: 22px;
+  height: 22px;
+  color: var(--bhp-ink);
+  flex-shrink: 0;
+}
+.wrap .search input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+.wrap .search input::placeholder {
+  color: var(--bhp-grey);
+}
+.wrap .search button {
+  margin: 0;
+  padding: 6px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--bhp-orange);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.wrap .search button:hover {
+  border-color: var(--bhp-orange);
+  background: var(--bhp-orange-wash);
+}
+
+/* Scope pills (single-select) */
+.wrap .scope {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.wrap .scope span {
+  padding: 4px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  font-size: 0.78rem;
+  color: var(--bhp-slate);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.wrap .scope span:hover {
+  border-color: var(--bhp-ink);
+  color: var(--bhp-ink);
+}
+.wrap .scope span.on,
+.wrap .scope span.on:hover {
+  background: var(--bhp-ink);
+  color: #ffffff;
+  border-color: var(--bhp-ink);
+}
+.wrap .scope span:focus-visible {
+  outline: 2px solid var(--bhp-orange);
+  outline-offset: 2px;
+}
+
+/* KPI stat line */
+.wrap .statline {
+  display: flex;
+  gap: 0;
+  margin: 54px 0 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+.wrap .stat {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 22px;
+  border-left: 1px solid var(--color-border);
+  transition: background 0.15s ease;
+}
+.wrap .stat:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+.wrap .stat:hover {
+  background: var(--bhp-orange-wash);
+}
+.wrap .stat__v {
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.wrap .stat__l {
+  margin-top: 7px;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+.wrap .stat__v {
+  transition: color 0.2s ease;
+}
+/* Brief brighten when a 30s refresh changes the figure, so an update is noticeable. */
+.wrap .stat__v.is-updated {
+  color: var(--bhp-orange);
+}
+.wrap .stat__spark {
+  margin-top: 10px;
+  height: 34px;
+}
+
+/* Charts (left) + tasks (right) */
+.wrap .figs {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 48px;
+  margin-top: 48px;
+}
+.wrap .fig__cap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+.wrap .fig__t {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: var(--font-weight-bold);
+}
+.wrap .fig__n {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+/* Flush caption: no underline; the first time-box border serves as the divider. */
+.wrap .fig__cap--flush {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 6px;
+}
+
+/* Timeboxed, collapsible task groups. The group divider lives on the header (an
+   animated .task-anim element), not the static .tgroup, so it fades in with the
+   row instead of on load. */
+.wrap .tgroup__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 2px;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  font: inherit;
+  text-align: left;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.wrap .tgroup__chev {
+  display: flex;
+  color: var(--bhp-grey);
+  transition: transform 0.18s ease;
+}
+.wrap .tgroup.collapsed .tgroup__chev {
+  transform: rotate(-90deg);
+}
+.wrap .tgroup__label {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: var(--font-weight-bold);
+}
+.wrap .tgroup__label.overdue {
+  color: #b42318;
+}
+.wrap .tgroup__count {
+  margin-left: auto;
+  padding: 1px 8px;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  background: var(--bhp-paper);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.wrap .tgroup__body {
+  padding-bottom: 6px;
+}
+.wrap .tgroup.collapsed .tgroup__body {
+  display: none;
+}
+.wrap .titem {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  padding: 10px 2px 10px 26px;
+}
+.wrap .titem + .titem {
+  border-top: 1px solid var(--color-border);
+}
+.wrap .titem__t {
+  font-size: 0.92rem;
+  font-weight: var(--font-weight-medium);
+}
+.wrap .titem__m {
+  margin-top: 3px;
+  font-size: 0.76rem;
+  color: var(--color-text-muted);
+}
+.wrap .titem__due {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: #a63d00;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+.wrap .titem__due.over {
+  color: #b42318;
+}
+/* Task rows are same-origin links (REQ-007); reset the anchor look, add a hover. */
+.wrap a.titem {
+  color: inherit;
+  text-decoration: none;
+}
+.wrap a.titem:hover {
+  background: var(--bhp-orange-wash);
+}
+.wrap a.titem:focus-visible {
+  outline: 2px solid var(--bhp-orange);
+  outline-offset: -2px;
+}
+
+/* Task panel loading skeleton + empty/error message. */
+.wrap .tskel {
+  height: 14px;
+  margin: 12px 0;
+  border-radius: 7px;
+  background: linear-gradient(90deg, var(--bhp-paper) 25%, var(--bhp-line) 37%, var(--bhp-paper) 63%);
+  background-size: 400% 100%;
+  animation: tskel-shimmer 1.3s ease-in-out infinite;
+}
+@keyframes tskel-shimmer {
+  from { background-position: 100% 0; }
+  to   { background-position: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wrap .tskel { animation: none; }
+}
+.wrap .tstate {
+  padding: 16px 2px;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+}
+.wrap .tstate.err {
+  color: #b42318;
+}
+
+/* The DLM tile sits at the foot of the tasks column. */
+.wrap .figs__tasks .dlm-tile {
+  margin-top: 18px;
+}
+
+/* Chart tooltips: drop just below the hovered point so they don't cover it. */
+.apexcharts-tooltip {
+  transform: translateY(17px);
+}
+/* KPI sparklines are tiny, so a dropped tooltip overhangs the card. Keep it at the
+   default position but translucent (background alpha only, never element opacity,
+   which ApexCharts uses to show/hide the tooltip). */
+.stat__spark .apexcharts-tooltip {
+  transform: none;
+}
+.stat__spark .apexcharts-tooltip.apexcharts-theme-light {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: rgba(11, 31, 42, 0.12);
+  box-shadow: 0 2px 8px rgba(11, 31, 42, 0.08);
+  backdrop-filter: blur(2px);
+}
+.stat__spark .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
+  background: rgba(244, 242, 239, 0.5);
+  border-color: rgba(11, 31, 42, 0.1);
+}
+
+/* On-load entrance, region by region: hero -> search -> KPIs -> charts -> tasks.
+   Gated under .wrap.is-ready, which page.js adds only on the general-landing path
+   (after the loading overlay hides), so an auto-navigating persona never animates
+   and nothing plays behind the overlay. */
+@keyframes landing-riseIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes landing-ruleGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .wrap.is-ready .eyebrow      { animation: landing-riseIn 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) 0.04s both; }
+  .wrap.is-ready h1 .l1        { display: inline-block; animation: landing-riseIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.12s both; }
+  .wrap.is-ready h1 .l2        { display: inline-block; animation: landing-riseIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.22s both; }
+  .wrap.is-ready .rule         { transform-origin: left center; animation: landing-ruleGrow 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) 0.36s both; }
+  .wrap.is-ready .lede         { animation: landing-riseIn 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) 0.44s both; }
+  .wrap.is-ready .search       { animation: landing-riseIn 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) 0.68s both; }
+  .wrap.is-ready .scope        { animation: landing-riseIn 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) 0.78s both; }
+  .wrap.is-ready .statline     { animation: landing-riseIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.98s both; }
+  .wrap.is-ready .figs__charts { animation: landing-riseIn 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) 1.26s both; }
+  /* Tasks cascade per row: tasks.js tags each visible header/row with .task-anim
+     and an incrementing --ti. Tasks load asynchronously (after the fetch), so the
+     cascade starts at render time (--ts: 0) with only the per-row stagger; the
+     rows naturally arrive after the structural sequence above. */
+  .wrap.is-ready .figs__tasks  { --ts: 0s; }
+  .wrap.is-ready .figs__tasks .task-anim { animation: landing-riseIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) calc(var(--ts, 0s) + var(--ti, 0) * 0.05s) both; }
+}
+/* Mobile reorders tasks above the KPIs and charts; re-time the KPI and chart
+   reveals (tasks keep their render-time cascade). */
+@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .wrap.is-ready .statline     { animation-delay: 1.26s; }
+  .wrap.is-ready .figs__charts { animation-delay: 1.46s; }
+}
+
+/* Tablet: stack hero over search, charts over tasks, stats to a 3-up grid */
+@media (max-width: 900px) {
+  .wrap {
+    padding: 40px 24px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .wrap .top {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    align-items: start;
+    order: 1;
+  }
+  .wrap .lede { max-width: none; }
+  /* .figs collapses so its two children join the .wrap flow and can be reordered. */
+  .wrap .figs { display: contents; }
+  .wrap .figs__charts { order: 4; }
+  .wrap .figs__tasks { order: 2; }
+  .wrap .statline {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    margin-top: 0;
+    order: 3;
+  }
+  .wrap .stat {
+    flex: none;
+    border-left: 0;
+    border-top: 0;
+    border-bottom: 1px solid var(--color-border);
+    padding: 16px 18px;
+  }
+  .wrap .stat:first-child { padding-left: 18px; }
+}
+
+/* Mobile: stats to a 2-up grid, tighter rhythm */
+@media (max-width: 560px) {
+  .wrap { padding: 32px 18px 40px; }
+  .wrap .statline { grid-template-columns: repeat(2, 1fr); }
+  .wrap .stat { padding: 14px 14px; }
+  .wrap .stat:first-child { padding-left: 14px; }
+  .wrap .stat__v { font-size: 1.7rem; }
+  .wrap .search { gap: 8px; }
+  .wrap .search button { padding: 6px 10px; }
+}
+
+/* --- Navigation notice (REQ-013) --- */
+/* A fixed banner at top-center, shown when a dashboard URL is unset/off-origin or
+   a hand-off is blocked. Orange-wash fill with an orange accent border, an info
+   icon, the message, and a close button. Sits above the page; appears only after
+   the loading overlay is hidden. */
+.notice {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1002;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: calc(100% - 32px);
+  max-width: 520px;
+  padding: 12px 14px;
+  background: var(--bhp-orange-wash);
+  border: 1px solid var(--bhp-orange-tint);
+  border-left: 4px solid var(--bhp-orange);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(11, 31, 42, 0.12);
+}
+
+.notice[hidden] {
+  display: none;
+}
+
+.notice__icon {
+  flex: none;
+  display: flex;
+  color: var(--bhp-orange);
+}
+
+.notice__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.notice__message {
+  flex: 1;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.notice__close {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.notice__close:hover,
+.notice__close:focus-visible {
+  background: var(--bhp-orange-pale);
+  color: var(--bhp-orange);
+}
+
+.notice__close:focus-visible {
+  outline: 2px solid var(--bhp-orange);
+  outline-offset: 1px;
+}
+
+.notice__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* --- Workflow-task panel (REQ-006, REQ-007) --- */
+/* Flagged palette exceptions (from the Task 3 spec): the BHP palette defines no
+   danger colour, so the error state uses one restrained red; the skeleton tones
+   sit between --bhp-line and --bhp-paper. Kept local to the panel and flagged for
+   a brand decision rather than promoted into the token system. */
+.wtp {
+  --rc-error: #B42318;
+  --rc-skel: #ECE9E4;
+  --rc-skel-hi: #F6F4F1;
+  width: 100%;
+  max-width: 560px;
+  margin-top: 8px;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.wtp[hidden] {
+  display: none;
+}
+
+/* Right rail on wide viewports; in-flow card below 960px. */
+@media (min-width: 961px) {
+  .wtp {
+    position: fixed;
+    top: 96px;
+    right: 24px;
+    width: 320px;
+    max-width: none;
+    margin-top: 0;
+    max-height: calc(100vh - 132px);
+    overflow-y: auto;
+    box-shadow: 0 8px 28px rgba(11, 31, 42, 0.10);
+  }
+}
+
+.wtp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.wtp-head__title {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-bold);
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+/* Count badge: orange-pale chip with the darker chart-series orange for contrast. */
+.wtp-badge {
+  padding: 2px 9px;
+  border-radius: 14px;
+  background: var(--bhp-orange-pale);
+  color: #A63D00;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.wtp-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wtp-item {
+  display: block;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.wtp-list li:last-child .wtp-item {
+  border-bottom: none;
+}
+
+.wtp-item:hover,
+.wtp-item:focus-visible {
+  background: var(--bhp-orange-wash);
+}
+
+.wtp-item:focus-visible {
+  outline: 2px solid var(--bhp-orange);
+  outline-offset: -2px;
+}
+
+.wtp-item__title {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.wtp-item__meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.wtp-item__due {
+  color: #A63D00;
+}
+
+/* An overdue task reads as urgent: the one restrained error tone. */
+.wtp-item__due.overdue {
+  color: var(--rc-error);
+}
+
+/* Empty and error states. */
+.wtp-state {
+  padding: 30px 18px;
+  text-align: center;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.wtp-state svg {
+  width: 26px;
+  height: 26px;
+  margin-bottom: 8px;
+  color: var(--bhp-orange-tint);
+}
+
+.wtp-state.err {
+  color: var(--rc-error);
+}
+
+.wtp-state.err svg {
+  color: var(--rc-error);
+}
+
+/* Loading skeleton: shimmering bars while the tasks load. */
+.wtp-skel {
+  height: 13px;
+  margin: 14px 16px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--rc-skel) 25%, var(--rc-skel-hi) 37%, var(--rc-skel) 63%);
+  background-size: 400% 100%;
+  animation: wtp-shimmer 1.4s ease infinite;
+}
+
+@keyframes wtp-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* Hold the skeleton steady for users who prefer no motion. */
+@media (prefers-reduced-motion: reduce) {
+  .wtp-skel {
+    animation: none;
+  }
+}
+
+/* --- DLM link tile (REQ-008) --- */
+/* Shown to a DLM user on the general landing: a white card with the brand
+   lifecycle icon, an orange-wash hover, and an orange border accent. The tile is
+   an anchor, so it sets display:flex; that beats the UA [hidden] rule, so an
+   explicit [hidden] rule below restores hiding until the router reveals it. */
+.dlm-tile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 8px;
+  padding: 16px 18px;
+  background: #ffffff;
+  border: 1.5px solid var(--color-border);
+  border-radius: 12px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.dlm-tile[hidden] {
+  display: none;
+}
+
+.dlm-tile:hover,
+.dlm-tile:focus-visible {
+  background: var(--bhp-orange-wash);
+  border-color: var(--bhp-orange);
+}
+
+.dlm-tile:focus-visible {
+  outline: 2px solid var(--bhp-orange);
+  outline-offset: 2px;
+}
+
+.dlm-tile__icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--bhp-orange-pale);
+  color: var(--bhp-orange);
+}
+
+.dlm-tile__icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+.dlm-tile__text {
+  flex: 1;
+}
+
+.dlm-tile__text b {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.dlm-tile__text span {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.dlm-tile__arrow {
+  flex: none;
+  color: var(--bhp-orange);
+}
+
+.dlm-tile__arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Hold the tile steady for users who prefer no motion. */
+@media (prefers-reduced-motion: reduce) {
+  .dlm-tile {
+    transition: none;
+  }
+}
+
