@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLM role dashboards - wireframes</title>
+<style>
+  /* Low-fidelity wireframes (v1): greyscale, structure only. Three role-specific
+     DLM dashboards - Technical Application Owner, Business Application Owner, and
+     Legal Officer. The high-fidelity pass applies the BHP palette and the brand/
+     components. Numbers are live from bhp-test (probed 2026-06-16): Retention
+     Instance 93 (77 Defined, 10 disposal overdue, 4 retain permanently, 1 ready,
+     1 disposed); Legal Hold 10 active; DLM Use Case 21; Retention & Disposal
+     Schedule 24,287; Obligation 723; Jurisdiction (DLM) 82. Per-user task and
+     approval counts are illustrative until we filter the live queue by candidate.
+     Yellow tags mark each panel's live data source for the build. */
+  :root {
+    --ink: #2b2b2b; --muted: #767676; --faint: #9a9a9a;
+    --line: #cfcfcf; --line-2: #b6b6b6; --panel: #f5f5f5; --fill: #ededed;
+    --note: #7a6a3a; --note-bg: #fbf6e6; --note-line: #e6d9a8;
+    --risk: #5a5a5a;
+    --gap: 16px; --radius: 8px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #e9e9e9;
+    font: 14px/1.45 "Helvetica Neue", Arial, sans-serif; color: var(--ink);
+    padding: 28px 20px 70px;
+  }
+  .frame {
+    max-width: 1180px; margin: 0 auto 8px; background: #fff;
+    border: 1px solid var(--line-2); border-radius: 10px; padding: 22px;
+  }
+  .chrome {
+    max-width: 1180px; margin: 40px auto 10px; height: 40px; border-radius: 8px;
+    background: #1f2a30; color: #cfd6da; display: flex; align-items: center;
+    padding: 0 16px; font-size: 12px; letter-spacing: .04em;
+  }
+  .chrome:first-of-type { margin-top: 0; }
+  .chrome b { color: #fff; font-weight: 700; letter-spacing: .08em; }
+  .caption { max-width: 1180px; margin: 0 auto 14px; color: #555; font-size: 12.5px; }
+  .caption b { color: #333; }
+  .intro { max-width: 1180px; margin: 0 auto 26px; color: #444; font-size: 13px; }
+  .intro h1 { font-size: 16px; margin: 0 0 8px; }
+
+  h2 { font-size: 12px; letter-spacing: .09em; text-transform: uppercase;
+       color: var(--muted); margin: 0 0 12px; font-weight: 700; }
+  .sub { color: var(--faint); font-weight: 400; letter-spacing: .02em;
+         text-transform: none; font-size: 11px; }
+  .note { display: inline-block; background: var(--note-bg); color: var(--note);
+          border: 1px solid var(--note-line); border-radius: 4px;
+          font-size: 11px; padding: 1px 6px; margin-left: 8px; vertical-align: middle; }
+
+  .row { display: flex; gap: var(--gap); margin-bottom: var(--gap); align-items: stretch; }
+  .col { display: flex; flex-direction: column; gap: var(--gap); }
+  .col.main { flex: 1 1 62%; } .col.rail { flex: 1 1 38%; }
+  .panel { border: 1px solid var(--line); border-radius: var(--radius);
+           background: #fff; padding: 16px; }
+  .panel.soft { background: var(--panel); }
+  .panel.co { flex: 1; }
+
+  /* Header: identity left, compact trend right. */
+  .header { display: flex; align-items: center; justify-content: space-between;
+            gap: 18px; margin-bottom: 16px; }
+  .ident { font-size: 20px; font-weight: 700; }
+  .ident span { color: var(--muted); font-weight: 400; }
+  .trendmini { display: flex; align-items: center; gap: 10px; }
+  .trendmini .lbl { text-align: right; }
+  .trendmini .lbl b { display: block; font-size: 11px; letter-spacing: .07em;
+                      text-transform: uppercase; color: var(--muted); }
+  .trendmini .lbl small { font-size: 10.5px; color: var(--faint); }
+  .spark { width: 200px; height: 44px; border: 1px dashed var(--line-2); border-radius: 5px;
+           background: var(--panel); display: flex; align-items: center; justify-content: center;
+           color: var(--faint); font-size: 10.5px; text-align: center; padding: 2px 6px; }
+
+  /* KPI strip. */
+  .kpis { display: flex; gap: var(--gap); margin-bottom: var(--gap); }
+  .kpi { flex: 1; border: 1px solid var(--line); border-radius: var(--radius);
+         background: #fff; padding: 13px 15px; }
+  .kpi .v { font-size: 26px; font-weight: 800; line-height: 1; }
+  .kpi .v small { font-size: 12px; font-weight: 700; color: var(--muted); }
+  .kpi .l { font-size: 11.5px; color: var(--muted); margin-top: 5px; }
+  .kpi.flag .v { color: var(--risk); }
+
+  .dropdown { border: 1px solid var(--line-2); border-radius: 6px; background: #fff;
+              padding: 7px 11px; font-size: 12.5px; color: #444; white-space: nowrap;
+              display: inline-flex; align-items: center; gap: 9px; }
+  .dropdown .chev { color: var(--faint); }
+
+  .hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+  .bignum { font-size: 52px; font-weight: 800; line-height: 1; }
+  .bignum small { display: block; font-size: 13px; font-weight: 400; color: var(--muted);
+                  margin-top: 6px; letter-spacing: .01em; }
+  .legend { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; font-size: 13px; color: #444; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #c4c4c4; display: inline-block; }
+  .dot.b2 { background: #a3a3a3; } .dot.b3 { background: #828282; } .dot.b4 { background: #636363; }
+  .dot.risk { background: var(--risk); }
+
+  /* Scoped catalog search. */
+  .search { display: flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+  .search .scope { background: var(--fill); border-right: 1px solid var(--line-2);
+                   padding: 12px 12px; font-size: 12.5px; color: #444; white-space: nowrap;
+                   display: flex; align-items: center; gap: 7px; }
+  .search .field { flex: 1; padding: 12px 12px; color: var(--faint); font-size: 13px; }
+  .search .go { background: #8c8c8c; color: #fff; padding: 12px 16px; font-size: 13px; }
+  .scopehint { font-size: 11px; color: var(--faint); margin-top: 9px; }
+
+  .phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .phead h2 { margin: 0; }
+
+  .grp { border-top: 1px solid var(--line); padding-top: 10px; margin-top: 10px; }
+  .grp:first-of-type { border-top: 0; padding-top: 0; margin-top: 4px; }
+  .grp h3 { font-size: 12.5px; margin: 0 0 8px; color: #444; font-weight: 700;
+            display: flex; align-items: center; gap: 7px; }
+  .grp h3 .n { color: var(--faint); font-weight: 400; }
+  .grp h3.over { color: var(--risk); }
+  .item { display: flex; align-items: center; gap: 10px; padding: 9px 10px;
+          border-radius: 6px; margin-bottom: 7px; background: #fff; }
+  .item .id { font-size: 11.5px; color: var(--faint); width: 118px; flex: none; }
+  .item .ttl { flex: 1; font-size: 13px; }
+  .chip { font-size: 11px; border: 1px solid var(--line-2); border-radius: 11px;
+          padding: 1px 9px; color: #555; background: var(--fill); white-space: nowrap; }
+  .due { font-size: 11.5px; color: var(--muted); width: 84px; text-align: right; flex: none; }
+  .due.over { color: var(--risk); font-weight: 700; }
+
+  /* Horizontal stage bars (greyscale; darkest = attention). */
+  .bars { display: flex; flex-direction: column; gap: 9px; }
+  .bar { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+  .bar .blbl { width: 210px; flex: none; color: #444; }
+  .bar .track { flex: 1; height: 16px; background: var(--fill); border-radius: 4px; overflow: hidden; }
+  .bar .fill { height: 100%; background: #b0b0b0; }
+  .bar.s1 .fill { background: #8c8c8c; } .bar.s2 .fill { background: #a3a3a3; }
+  .bar.s3 .fill { background: #c4c4c4; } .bar.s4 .fill { background: #d2d2d2; }
+  .bar.risk .fill { background: var(--risk); }
+  .bar .bv { width: 34px; flex: none; text-align: right; font-weight: 700; color: #444; }
+  .bar.risk .bv { color: var(--risk); }
+
+  .donut { width: 116px; height: 116px; border-radius: 50%;
+           background: conic-gradient(#8c8c8c 0 78%, #b0b0b0 78% 90%, var(--risk) 90% 100%);
+           position: relative; flex: none; }
+  .donut::after { content: ""; position: absolute; inset: 30px; background: #fff; border-radius: 50%; }
+  .mix { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .mix .key { font-size: 12.5px; color: #444; }
+  .mix .key div { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .sw { width: 11px; height: 11px; border-radius: 2px; background: #8c8c8c; }
+  .sw.s2 { background: #b0b0b0; } .sw.s3 { background: #cccccc; } .sw.risk { background: var(--risk); }
+  .chartbox { border: 1px dashed var(--line-2); border-radius: 6px; background: var(--panel);
+              flex: 1; min-width: 240px; min-height: 116px; display: flex; align-items: center;
+              justify-content: center; color: var(--faint); font-size: 12px; text-align: center; padding: 8px; }
+  .callout { border: 1px solid var(--line); border-left: 3px solid var(--risk); border-radius: 6px;
+             background: #fafafa; padding: 12px 14px; font-size: 12.5px; color: #444; }
+  .callout b { color: var(--risk); }
+
+  .placeholder { border: 1px dashed var(--line-2); border-radius: 6px; background: repeating-linear-gradient(
+      45deg, #f7f7f7, #f7f7f7 8px, #f1f1f1 8px, #f1f1f1 16px);
+      padding: 16px; text-align: center; color: var(--faint); font-size: 12.5px; }
+  .divider { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint);
+             text-align: center; margin: 14px 0 10px; }
+  .reflist { font-size: 12.5px; color: #444; }
+  .reflist div { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line); }
+  .reflist div:last-child { border-bottom: 0; }
+  .reflist b { font-weight: 700; }
+
+  @media (max-width: 880px) { .row, .kpis { flex-direction: column; } .bar .blbl { width: 130px; } }
+</style>
+</head>
+<body>
+
+  <div class="intro">
+    <h1>DLM role dashboards - low-fidelity wireframes</h1>
+    Three role-specific dashboards for the Data Lifecycle Management workflow, one per persona:
+    <b>Technical Application Owner (TAO)</b>, <b>Business Application Owner (BAO)</b>, and
+    <b>Legal Officer</b>. Each blends an estate / compliance overview (top) with that role's own
+    action queue (below), the "both in one" layout. Content follows the BHP DLM RACI (TAO enforces
+    technically, BAO approves for the business, Legal owns holds and disposal clearance). Numbers are
+    live from bhp-test; per-user counts are illustrative until the queue is filtered by candidate.
+    Greyscale and structure only - the BHP brand pass comes next.
+  </div>
+
+  <!-- ============================ TAO ============================ -->
+  <div class="chrome"><b>BHP</b>&nbsp;&nbsp;Collibra Data Intelligence Platform&nbsp;&nbsp;&middot;&nbsp;&nbsp;DLM &mdash; Technical Application Owner</div>
+  <p class="caption"><b>Technical Application Owner.</b> Owns technical enforcement of lifecycle rules:
+    configure retention, run archival, execute disposal, apply and clear holds in the system, capture
+    audit evidence (RACI processes P1-P5, mostly Responsible). The dashboard leads with what needs
+    enforcing now - retention to apply, disposals past due, holds to implement.</p>
+
+  <div class="frame">
+    <div class="header">
+      <div class="ident">DLM &middot; Technical Application Owner <span>&middot; Hi Priya</span></div>
+      <div class="trendmini">
+        <div class="lbl"><b>Disposals executed</b><small>per month, last 12 mo</small></div>
+        <div class="spark">column micro-chart<br>(Retention Instance, disposal-applied date)</div>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v">6</div><div class="l">My applications &amp; repositories</div></div>
+      <div class="kpi"><div class="v">93</div><div class="l">Retention instances I enforce</div></div>
+      <div class="kpi flag"><div class="v">11</div><div class="l">Disposal actions due (10 overdue)</div></div>
+      <div class="kpi"><div class="v">10</div><div class="l">Legal holds to enforce</div></div>
+    </div>
+
+    <div class="row">
+      <div class="panel co">
+        <h2>My open DLM tasks <span class="note">workflowTasks, candidateUser = me</span></h2>
+        <div class="hero">
+          <div class="bignum">6<small>retention &amp; disposal tasks assigned to you</small></div>
+          <div class="legend">
+            <span><i class="dot"></i> Retention assignment <b>3</b></span>
+            <span><i class="dot b2"></i> Record definition <b>1</b></span>
+            <span><i class="dot risk"></i> Disposal execution <b>2</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="panel co">
+        <h2>Search the catalog</h2>
+        <div class="search">
+          <span class="scope">Retention Instances <span class="chev">&#9662;</span></span>
+          <span class="field">Search...</span>
+          <span class="go">Search</span>
+        </div>
+        <div class="scopehint">Scope: Retention Instances &middot; Retention &amp; Disposal Schedules &middot; Applications &middot; All</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col main">
+        <div class="panel">
+          <h2>Retention instances by lifecycle stage <span class="note">Retention Instance, by status (93)</span></h2>
+          <div class="bars">
+            <div class="bar s1"><span class="blbl">Defined (retention running)</span><span class="track"><span class="fill" style="width:83%"></span></span><span class="bv">77</span></div>
+            <div class="bar s2"><span class="blbl">Retain permanently</span><span class="track"><span class="fill" style="width:8%"></span></span><span class="bv">4</span></div>
+            <div class="bar s3"><span class="blbl">Elapsed - ready to dispose</span><span class="track"><span class="fill" style="width:3%"></span></span><span class="bv">1</span></div>
+            <div class="bar s4"><span class="blbl">Elapsed - disposal applied</span><span class="track"><span class="fill" style="width:3%"></span></span><span class="bv">1</span></div>
+            <div class="bar risk"><span class="blbl">Elapsed - NOT carried out</span><span class="track"><span class="fill" style="width:11%"></span></span><span class="bv">10</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col rail">
+        <div class="panel soft">
+          <h2>Disposal backlog <span class="note">status = Elapsed - Not Carried Out</span></h2>
+          <div class="callout"><b>10 instances</b> are past their retention period with no disposal action applied. Execute or escalate.</div>
+          <div class="item" style="margin-top:12px"><span class="id">RI &middot; AUS FY2015</span><span class="ttl">Cost Centre Structure - SAMS (WAIO)</span><span class="due over">Overdue</span></div>
+          <div class="item"><span class="id">RI &middot; AUS FY2018</span><span class="ttl">Address - Contractor Website</span><span class="due over">Overdue</span></div>
+          <div class="item"><span class="id">RI &middot; AUS FY2015</span><span class="ttl">Cost Centre Structure - NiW</span><span class="due over">Overdue</span></div>
+          <div class="scopehint">+ 7 more</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col main">
+        <div class="panel">
+          <div class="phead">
+            <h2>My retention &amp; disposal queue <span class="sub">sorted by due date</span></h2>
+            <span class="dropdown">Workflow: <b>All types</b> <span class="chev">&#9662;</span></span>
+          </div>
+          <div class="grp">
+            <h3 class="over">Overdue <span class="n">(2)</span></h3>
+            <div class="item"><span class="id">disposalExecution</span><span class="ttl">Execute disposal - Cost Centre Structure (SAMS WAIO)</span><span class="chip">Disposal</span><span class="due over">Overdue</span></div>
+            <div class="item"><span class="id">retentionAssignment</span><span class="ttl">Apply retention label - Driver Monitoring (AUS)</span><span class="chip">Retention</span><span class="due over">Overdue</span></div>
+          </div>
+          <div class="grp">
+            <h3>This week <span class="n">(3)</span></h3>
+            <div class="item"><span class="id">retentionAssignmentRecordDefiniton</span><span class="ttl">Define record - Access Zones (GBL)</span><span class="chip">Record def.</span><span class="due">Thu</span></div>
+            <div class="item"><span class="id">disposalExecution</span><span class="ttl">Verify deletion evidence - Events and Breaches</span><span class="chip">Disposal</span><span class="due">Fri</span></div>
+            <div class="item"><span class="id">addDLMControl</span><span class="ttl">Add control - Documentum BHP_RECORDS</span><span class="chip">Control</span><span class="due">Mon</span></div>
+          </div>
+          <div class="grp">
+            <h3>This month <span class="n">(1)</span></h3>
+            <div class="item"><span class="id">retentionAssignment</span><span class="ttl">Confirm expiry trigger - Hosting Type (GBL)</span><span class="chip">Retention</span><span class="due">24 Jun</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col rail">
+        <div class="panel soft">
+          <h2>My applications &amp; repositories <span class="note">Business Application / Application Service / Documentum Repository</span></h2>
+          <div class="item"><span class="id">App Service</span><span class="ttl">DSS (Driver Safety System) - CVM</span><span class="chip">Accepted</span></div>
+          <div class="item"><span class="id">App Service</span><span class="ttl">Documentum - Group Functions</span><span class="chip">Accepted</span></div>
+          <div class="item"><span class="id">Repository</span><span class="ttl">BHP_RECORDS::/GLOBAL_FUNCTIONS</span><span class="chip">Candidate</span></div>
+          <div class="scopehint">Coverage: 4 of 6 have retention applied &middot; 2 need configuration</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ BAO ============================ -->
+  <div class="chrome"><b>BHP</b>&nbsp;&nbsp;Collibra Data Intelligence Platform&nbsp;&nbsp;&middot;&nbsp;&nbsp;DLM &mdash; Business Application Owner</div>
+  <p class="caption"><b>Business Application Owner.</b> Business custodian of the content: endorse that
+    retention applies, approve disposal scope and timing, give attestations, confirm no business
+    extension is needed (RACI P2-P4, mostly Accountable). The dashboard leads with decisions waiting
+    on the business - disposals to sign off, retention to confirm, use cases to validate.</p>
+
+  <div class="frame">
+    <div class="header">
+      <div class="ident">DLM &middot; Business Application Owner <span>&middot; Hi Daniel</span></div>
+      <div class="trendmini">
+        <div class="lbl"><b>Approvals completed</b><small>per month, last 12 mo</small></div>
+        <div class="spark">column micro-chart<br>(disposal / retention sign-offs)</div>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v">9</div><div class="l">My business applications</div></div>
+      <div class="kpi flag"><div class="v">5</div><div class="l">Disposals awaiting my sign-off</div></div>
+      <div class="kpi"><div class="v">21</div><div class="l">DLM use cases to validate</div></div>
+      <div class="kpi"><div class="v">78<small>%</small></div><div class="l">Retention applicability reviewed</div></div>
+    </div>
+
+    <div class="row">
+      <div class="panel co">
+        <h2>Awaiting my approval <span class="note">workflowTasks (approval), candidateUser = me</span></h2>
+        <div class="hero">
+          <div class="bignum">5<small>decisions waiting on you</small></div>
+          <div class="legend">
+            <span><i class="dot risk"></i> Disposal sign-off <b>3</b></span>
+            <span><i class="dot b2"></i> Retention applicability <b>1</b></span>
+            <span><i class="dot b3"></i> Attestation <b>1</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="panel co">
+        <h2>Search the catalog</h2>
+        <div class="search">
+          <span class="scope">My Applications <span class="chev">&#9662;</span></span>
+          <span class="field">Search...</span>
+          <span class="go">Search</span>
+        </div>
+        <div class="scopehint">Scope: Applications &middot; Retention &amp; Disposal Schedules &middot; DLM Use Cases &middot; All</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col main">
+        <div class="panel">
+          <h2>Retention coverage across my applications <span class="note">Business Application &harr; Retention Instance</span></h2>
+          <div class="bars">
+            <div class="bar s1"><span class="blbl">SharePoint - Group Functions</span><span class="track"><span class="fill" style="width:95%"></span></span><span class="bv">95%</span></div>
+            <div class="bar s1"><span class="blbl">Documentum - Group Functions</span><span class="track"><span class="fill" style="width:88%"></span></span><span class="bv">88%</span></div>
+            <div class="bar s2"><span class="blbl">Contractor Website</span><span class="track"><span class="fill" style="width:64%"></span></span><span class="bv">64%</span></div>
+            <div class="bar risk"><span class="blbl">SAMS - WAIO</span><span class="track"><span class="fill" style="width:40%"></span></span><span class="bv">40%</span></div>
+          </div>
+          <div class="scopehint">Share of each application's content with a retention rule applied. Low coverage = compliance gap.</div>
+        </div>
+      </div>
+      <div class="col rail">
+        <div class="panel soft">
+          <h2>Disposal awaiting business approval <span class="note">Retention Instance, elapsed, pending BAO</span></h2>
+          <div class="callout">Disposal proceeds only after your sign-off that no business extension applies.</div>
+          <div class="item" style="margin-top:12px"><span class="id">RI &middot; elapsed</span><span class="ttl">Cost Centre Structure - SAMS (WAIO)</span><span class="due over">Decide</span></div>
+          <div class="item"><span class="id">RI &middot; elapsed</span><span class="ttl">Address - Contractor Website</span><span class="due over">Decide</span></div>
+          <div class="scopehint">+ 3 more awaiting approval</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col main">
+        <div class="panel">
+          <div class="phead">
+            <h2>My approvals queue <span class="sub">sorted by due date</span></h2>
+            <span class="dropdown">Type: <b>All</b> <span class="chev">&#9662;</span></span>
+          </div>
+          <div class="grp">
+            <h3 class="over">Overdue <span class="n">(1)</span></h3>
+            <div class="item"><span class="id">disposalExecution</span><span class="ttl">Approve disposal scope - Cost Centre Structure (SAMS)</span><span class="chip">Disposal sign-off</span><span class="due over">Overdue</span></div>
+          </div>
+          <div class="grp">
+            <h3>This week <span class="n">(3)</span></h3>
+            <div class="item"><span class="id">disposalExecution</span><span class="ttl">Confirm no extension - Address (Contractor Website)</span><span class="chip">Disposal sign-off</span><span class="due">Wed</span></div>
+            <div class="item"><span class="id">retentionAssignment</span><span class="ttl">Confirm retention applies - Hosting Type (GBL)</span><span class="chip">Retention</span><span class="due">Fri</span></div>
+            <div class="item"><span class="id">attestation</span><span class="ttl">Quarterly content attestation - SharePoint</span><span class="chip">Attestation</span><span class="due">Mon</span></div>
+          </div>
+          <div class="grp">
+            <h3>This month <span class="n">(1)</span></h3>
+            <div class="item"><span class="id">createDLMUseCase</span><span class="ttl">Validate use case - DLM SharePoint Use case</span><span class="chip">Use case</span><span class="due">26 Jun</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col rail">
+        <div class="panel soft">
+          <h2>DLM use cases to validate <span class="note">DLM Use Case, status = Candidate (21)</span></h2>
+          <div class="item"><span class="id">Use case</span><span class="ttl">DLM Documentum Use case</span><span class="chip">Candidate</span></div>
+          <div class="item"><span class="id">Use case</span><span class="ttl">DLM SharePoint Use case</span><span class="chip">Candidate</span></div>
+          <div class="item"><span class="id">Use case</span><span class="ttl">Bus Apps - Documentum Group Functions</span><span class="chip">Candidate</span></div>
+          <div class="scopehint">21 candidate use cases across the estate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ LEGAL ============================ -->
+  <div class="chrome"><b>BHP</b>&nbsp;&nbsp;Collibra Data Intelligence Platform&nbsp;&nbsp;&middot;&nbsp;&nbsp;DLM &mdash; Legal Officer</div>
+  <p class="caption"><b>Legal Officer.</b> Owns the legal-hold lifecycle - trigger, scope, review
+    cadence, release - and clears disposal where legal risk applies (RACI P5 Accountable, P4 disposal
+    clearance). The dashboard leads with the Legal Hold Register and anything blocking defensible
+    disposal, against the regulatory backbone of obligations and jurisdictions.</p>
+
+  <div class="frame">
+    <div class="header">
+      <div class="ident">DLM &middot; Legal Officer <span>&middot; Hi Sarah</span></div>
+      <div class="trendmini">
+        <div class="lbl"><b>Holds placed vs released</b><small>per month, last 12 mo</small></div>
+        <div class="spark">two-line micro-chart<br>(Legal Hold, by event date)</div>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v">10</div><div class="l">Active legal holds</div></div>
+      <div class="kpi flag"><div class="v">3</div><div class="l">Holds due for review</div></div>
+      <div class="kpi flag"><div class="v">5</div><div class="l">Disposals awaiting legal clearance</div></div>
+      <div class="kpi"><div class="v">723</div><div class="l">Obligations tracked</div></div>
+    </div>
+
+    <div class="row">
+      <div class="panel co">
+        <h2>Active legal holds <span class="note">Legal Hold, status = Active (10)</span></h2>
+        <div class="hero">
+          <div class="bignum">10<small>holds currently suspending disposal</small></div>
+          <div class="legend">
+            <span><i class="dot"></i> SharePoint (_SP) <b>6</b></span>
+            <span><i class="dot b2"></i> Exchange (_EX) <b>3</b></span>
+            <span><i class="dot b3"></i> Other <b>1</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="panel co">
+        <h2>Search the catalog</h2>
+        <div class="search">
+          <span class="scope">Legal Holds <span class="chev">&#9662;</span></span>
+          <span class="field">Search...</span>
+          <span class="go">Search</span>
+        </div>
+        <div class="scopehint">Scope: Legal Holds &middot; Obligations &middot; Jurisdictions &middot; All</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col main">
+        <div class="panel">
+          <h2>Legal holds by review cadence <span class="note">Legal Hold, by review-due date</span></h2>
+          <div class="bars">
+            <div class="bar risk"><span class="blbl">Review overdue</span><span class="track"><span class="fill" style="width:20%"></span></span><span class="bv">2</span></div>
+            <div class="bar s2"><span class="blbl">Review due this month</span><span class="track"><span class="fill" style="width:10%"></span></span><span class="bv">1</span></div>
+            <div class="bar s1"><span class="blbl">In effect, next review later</span><span class="track"><span class="fill" style="width:60%"></span></span><span class="bv">6</span></div>
+            <div class="bar s3"><span class="blbl">Flagged for release</span><span class="track"><span class="fill" style="width:10%"></span></span><span class="bv">1</span></div>
+          </div>
+          <div class="scopehint">Holds must be reviewed on cadence; expired or redundant holds get released so lifecycle resumes.</div>
+        </div>
+      </div>
+      <div class="col rail">
+        <div class="panel soft">
+          <h2>Disposal awaiting legal clearance <span class="note">elapsed Retention Instance intersecting a hold</span></h2>
+          <div class="callout">Disposal is blocked while a hold applies. Clear or confirm the hold to release for disposal.</div>
+          <div class="item" style="margin-top:12px"><span class="id">Hold &middot; _SP</span><span class="ttl">Events and Breaches (GBL) - under hold</span><span class="due over">Review</span></div>
+          <div class="item"><span class="id">Hold &middot; _EX</span><span class="ttl">Termination Data (AUS) - under hold</span><span class="due over">Review</span></div>
+          <div class="scopehint">+ 3 more awaiting clearance</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col main">
+        <div class="panel">
+          <div class="phead">
+            <h2>Holds to review &amp; release <span class="sub">sorted by review-due date</span></h2>
+            <span class="dropdown">Scope: <b>All repositories</b> <span class="chev">&#9662;</span></span>
+          </div>
+          <div class="grp">
+            <h3 class="over">Review overdue <span class="n">(2)</span></h3>
+            <div class="item"><span class="id">Legal Hold &middot; _SP</span><span class="ttl">09b276a5...-SP - matter review</span><span class="chip">Active</span><span class="due over">Overdue</span></div>
+            <div class="item"><span class="id">Legal Hold &middot; _EX</span><span class="ttl">48cd8ed7...-EX - matter review</span><span class="chip">Active</span><span class="due over">Overdue</span></div>
+          </div>
+          <div class="grp">
+            <h3>Due this month <span class="n">(1)</span></h3>
+            <div class="item"><span class="id">Legal Hold &middot; _SP</span><span class="ttl">2a9b7534...-SP - cadence review</span><span class="chip">Active</span><span class="due">28 Jun</span></div>
+          </div>
+          <div class="grp">
+            <h3>Flagged for release <span class="n">(1)</span></h3>
+            <div class="item"><span class="id">Legal Hold &middot; _EX</span><span class="ttl">Matter closed - confirm release</span><span class="chip">Release</span><span class="due">Confirm</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col rail">
+        <div class="panel soft">
+          <h2>Regulatory backbone <span class="note">live reference counts</span></h2>
+          <div class="reflist">
+            <div><span>Obligations</span><b>723</b></div>
+            <div><span>Jurisdictions (DLM)</span><b>82</b></div>
+            <div><span>Retention &amp; Disposal Schedules</span><b>24,287</b></div>
+            <div><span>Regulators</span><b>register</b></div>
+          </div>
+          <div class="divider">— Legal Hold Register —</div>
+          <div class="placeholder">Open the Legal Hold Register<br><span style="font-size:11px;">10 active holds &middot; full matter detail</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
