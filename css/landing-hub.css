@@ -363,6 +363,27 @@
   }
 }
 
+/* Reduced motion: no movement. Keep the colour/border hover feedback (state, not
+   motion); drop the transitions, entrance animations, and hover transforms. The
+   JS open/close already swaps instantly when this is set. */
+@media (prefers-reduced-motion: reduce) {
+  .cat,
+  .cat__art,
+  .cat__go,
+  .bt,
+  .detail__back,
+  .detail__back svg {
+    transition: none;
+    animation: none;
+  }
+  .cat:hover,
+  .cat:hover .cat__art,
+  .cat:hover .cat__go,
+  .detail__back:hover svg {
+    transform: none;
+  }
+}
+
 /* ===== Responsive ===== */
 /* styles.css turns .wrap into an ordered flex column below 900px; give the hub a
    slot after the hero/search (which carries order:1 there). */
