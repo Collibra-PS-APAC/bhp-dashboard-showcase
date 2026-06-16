@@ -12,12 +12,8 @@
   margin-top: 56px;
 }
 
-/* The two stacked views share one stage. Only one is in flow at a time (the
+/* The two stacked views share one stage; only one is in flow at a time (the
    other carries [hidden]), so the page height follows whichever is showing. */
-.hub__stage {
-  position: relative;
-}
-
 .hub__grid[hidden],
 .hub__detail[hidden] {
   display: none;
@@ -41,7 +37,7 @@
   min-height: 208px;
   padding: 26px 26px 22px;
   text-align: left;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 16px;
   cursor: pointer;
@@ -88,7 +84,7 @@
   border-radius: 13px;
   color: var(--acc);
   background: var(--bhp-paper);
-  background: color-mix(in srgb, var(--acc) 11%, #ffffff);
+  background: color-mix(in srgb, var(--acc) 11%, var(--color-surface));
   transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .cat__art svg {
@@ -169,7 +165,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 15px 8px 12px;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 999px;
   font: inherit;
@@ -239,7 +235,7 @@
   border-radius: 15px;
   color: var(--acc);
   background: var(--bhp-paper);
-  background: color-mix(in srgb, var(--acc) 12%, #ffffff);
+  background: color-mix(in srgb, var(--acc) 12%, var(--color-surface));
 }
 .detail__art svg {
   width: 32px;
@@ -280,7 +276,7 @@
   display: flex;
   flex-direction: column;
   padding: 18px;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 14px;
   transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
@@ -289,7 +285,7 @@
   border-color: var(--bhp-orange-tint);
   border-color: color-mix(in srgb, var(--acc) 42%, var(--color-border));
   background: var(--bhp-orange-wash);
-  background: color-mix(in srgb, var(--acc) 6%, #ffffff);
+  background: color-mix(in srgb, var(--acc) 6%, var(--color-surface));
 }
 .bt__no {
   font-size: 0.72rem;
@@ -317,7 +313,7 @@
   grid-column: span 2;
   grid-row: span 2;
   background: var(--bhp-orange-wash);
-  background: color-mix(in srgb, var(--acc) 9%, #ffffff);
+  background: color-mix(in srgb, var(--acc) 9%, var(--color-surface));
   border-color: var(--bhp-orange-tint);
   border-color: color-mix(in srgb, var(--acc) 32%, var(--color-border));
 }
@@ -332,7 +328,7 @@
 }
 .bt--lead:hover {
   background: var(--bhp-orange-pale);
-  background: color-mix(in srgb, var(--acc) 14%, #ffffff);
+  background: color-mix(in srgb, var(--acc) 14%, var(--color-surface));
 }
 .bt--wide {
   grid-column: span 2;

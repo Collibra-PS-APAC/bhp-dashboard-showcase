@@ -43,7 +43,8 @@
   --color-on-secondary:     #FFFFFF;
   --color-text:           var(--bhp-ink);
   --color-text-muted:     var(--bhp-grey);
-  --color-bg:             var(--bhp-paper);
+  --color-bg:             var(--bhp-paper);   /* warm off-white page fill */
+  --color-surface:        #FFFFFF;            /* card / control surface (kept pure white to match the body and existing cards) */
   --color-border:         var(--bhp-line);
 
   /* --- Type --- */
