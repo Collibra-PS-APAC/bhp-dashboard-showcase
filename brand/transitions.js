@@ -4,6 +4,8 @@
    pagereveal events the listeners simply never fire and navigation is normal.
 
    Routes:
+     gateway          -> landing / palette-preview : slide-down
+     landing / preview -> gateway                  : slide-up
      palette-preview  -> collibra-theme-config : slide-left
      collibra-config  -> palette-preview       : slide-right
      palette-preview  -> a component subpage   : slide-down
@@ -20,12 +22,22 @@
     if (/palette-(inputs|routing|graphs)\.html$/.test(pathname)) return 'sub';
     if (/dashboard-concepts\/index\.html$/.test(pathname)) return 'dashidx';
     if (/dashboard-concepts\/concept-[\w-]+\.html$/.test(pathname)) return 'concept';
+    if (/landing_page\/(?:index\.html)?$/.test(pathname)) return 'landing';
+    // Gateway: the bundle-root index. Match the root itself or a root-level
+    // index.html, but not the index.html inside any known subfolder.
+    if (pathname === '/' ||
+        (/(?:^|\/)index\.html$/.test(pathname) &&
+         !/(?:landing_page|data_privacy|dlm|data_utilities|design-explorations)\//.test(pathname))) {
+      return 'gateway';
+    }
     return null;
   }
 
   function direction(fromPath, toPath) {
     var a = role(fromPath);
     var b = role(toPath);
+    if (a === 'gateway' && (b === 'landing' || b === 'preview')) return 'slide-down';
+    if ((a === 'landing' || a === 'preview') && b === 'gateway') return 'slide-up';
     if (a === 'preview' && b === 'config') return 'slide-left';
     if (a === 'config' && b === 'preview') return 'slide-right';
     if (a === 'preview' && b === 'sub') return 'slide-down';

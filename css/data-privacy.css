@@ -31,6 +31,9 @@ body {
   border-radius: 16px;
   padding: 18px;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
+  /* Grid items default to min-width auto, so a fixed-width ApexCharts canvas
+     would hold every track open after the viewport narrows. */
+  min-width: 0;
 }
 .tile:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(11, 31, 42, 0.10); }
 
@@ -161,7 +164,7 @@ body {
 .grp .gh.over { color: var(--dp-err); }
 .grp .gh .n { color: var(--bhp-grey); font-weight: var(--font-weight-regular); }
 .ti {
-  display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--bhp-line);
+  display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid transparent;
   border-radius: 12px; margin-bottom: 8px; cursor: pointer; text-decoration: none; color: inherit;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
@@ -243,4 +246,29 @@ body {
   .bento { grid-template-columns: 1fr; grid-template-areas: "head" "hero" "search" "queue" "rail" "who" "dpia"; }
   .head { flex-direction: column; align-items: flex-start; gap: 14px; }
   .head .trend { min-width: 0; width: 100%; justify-content: space-between; }
+  .head .trend .spark { flex: 1; min-width: 0; max-width: 230px; }
+}
+
+/* Below ~560px the fixed queue columns and the label+spark row no longer fit:
+   the title takes its own line and the spark goes full width. */
+@media (max-width: 560px) {
+  .dp-page { padding: 18px 16px 48px; }
+
+  .head .trend { flex-direction: column; align-items: stretch; gap: 8px; }
+  .head .trend .lbl { text-align: left; }
+  .head .trend .spark { width: 100%; max-width: none; }
+
+  .hero .big { font-size: 56px; }
+
+  .sh { flex-wrap: wrap; }
+  .menu { left: 0; right: auto; max-width: calc(100vw - 64px); }
+
+  .ti { flex-wrap: wrap; row-gap: 4px; }
+  .ti .t { flex: 1 1 100%; order: -1; }
+  .ti .wid { width: auto; }
+  .due { width: auto; margin-left: auto; text-align: right; }
+
+  /* Comfortable touch targets for the tap-only controls. */
+  .scope span { padding: 8px 14px; }
+  .menu label { padding: 10px 9px; }
 }
