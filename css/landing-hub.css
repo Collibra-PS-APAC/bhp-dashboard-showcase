@@ -1,0 +1,386 @@
+/* BHP Data Catalog landing hub.
+   The front-door page: hero + search (reused from styles.css) sit above four
+   category cards. Pick a card and the other three slide away while the chosen
+   one opens into a bento of its sub-sections; Back returns to the four.
+
+   Colours, fonts, and weights come from css/brand-tokens.css. The hero, search,
+   and scope pills are styled by css/styles.css; this file owns only the hub.
+   Anchored on BHP Orange #E65400; navy grounds, teal cools. */
+
+/* ===== Hub shell ===== */
+.hub {
+  margin-top: 56px;
+}
+
+/* The two stacked views share one stage. Only one is in flow at a time (the
+   other carries [hidden]), so the page height follows whichever is showing. */
+.hub__stage {
+  position: relative;
+}
+
+.hub__grid[hidden],
+.hub__detail[hidden] {
+  display: none;
+}
+
+/* ===== Primary view: four category cards ===== */
+.hub__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+/* Each card is a single button. A hairline at rest; orange edge, lift, and warm
+   wash on hover so the card visibly invites the expansion it triggers. No top
+   accent stripe (a banned tell); emphasis comes from the heading and the art. */
+.cat {
+  --acc: var(--bhp-orange);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 208px;
+  padding: 26px 26px 22px;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  overflow: hidden;
+  transition:
+    transform 0.38s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.34s ease,
+    border-color 0.2s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.cat:hover {
+  border-color: var(--bhp-orange);
+  background: var(--bhp-orange-wash);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 34px rgba(11, 31, 42, 0.10);
+}
+.cat:focus-visible {
+  outline: 2px solid var(--bhp-orange);
+  outline-offset: 3px;
+}
+
+/* The top row: ordinal label on the left, line art on the right. */
+.cat__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.cat__idx {
+  font-size: 0.74rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.18em;
+  color: var(--acc);
+}
+.cat__art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 13px;
+  color: var(--acc);
+  background: var(--bhp-paper);
+  background: color-mix(in srgb, var(--acc) 11%, #ffffff);
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.cat__art svg {
+  width: 28px;
+  height: 28px;
+}
+.cat:hover .cat__art {
+  transform: scale(1.06) rotate(-2deg);
+}
+
+.cat__title {
+  margin: 0;
+  font-size: 1.32rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+  color: var(--bhp-ink);
+}
+.cat__desc {
+  margin: 8px 0 0;
+  max-width: 34ch;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* Footer row: count of sub-sections, and an arrow that slides on hover. */
+.cat__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 18px;
+}
+.cat__count {
+  font-size: 0.78rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--bhp-slate);
+}
+.cat__go {
+  display: flex;
+  color: var(--acc);
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.cat__go svg {
+  width: 20px;
+  height: 20px;
+}
+.cat:hover .cat__go {
+  transform: translateX(5px);
+}
+
+/* The three cards the user did not pick exit; the picked one lifts a touch
+   before the view swaps. transform/opacity only, so no layout work. */
+.cat.is-exit {
+  opacity: 0;
+  transform: translateY(16px) scale(0.955);
+  pointer-events: none;
+}
+.cat.is-pick {
+  transform: translateY(-3px);
+  border-color: var(--bhp-orange);
+}
+
+/* ===== Detail view: one category opened into a bento ===== */
+.hub__detail {
+  --acc: var(--bhp-orange);
+}
+
+.detail__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px 8px 12px;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--bhp-ink);
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+.detail__back svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.detail__back:hover {
+  border-color: var(--bhp-orange);
+  background: var(--bhp-orange-wash);
+  color: var(--bhp-orange);
+}
+.detail__back:hover svg {
+  transform: translateX(-3px);
+}
+.detail__back:focus-visible {
+  outline: 2px solid var(--bhp-orange);
+  outline-offset: 2px;
+}
+
+/* A quiet, honest note: these destinations are not wired up yet. */
+.detail__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--bhp-grey);
+}
+.detail__hint::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acc);
+  flex: none;
+}
+
+/* Category identity: art chip, title, descriptor. */
+.detail__id {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 22px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--color-border);
+}
+.detail__art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  flex: none;
+  border-radius: 15px;
+  color: var(--acc);
+  background: var(--bhp-paper);
+  background: color-mix(in srgb, var(--acc) 12%, #ffffff);
+}
+.detail__art svg {
+  width: 32px;
+  height: 32px;
+}
+.detail__title {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.05rem);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  color: var(--bhp-ink);
+  line-height: 1.05;
+}
+.detail__desc {
+  margin: 5px 0 0;
+  font-size: 0.98rem;
+  color: var(--color-text-muted);
+}
+
+/* ===== Bento ===== */
+/* A four-column dense grid. Each tile carries a span (lead = 2x2, wide = 2x1)
+   in the data, so auto-placement composes a deliberate, asymmetric bento that
+   adapts to each category's count (2, 4, 6, 7). Technical gets its own two-up
+   grid below, because two tiles read better large than packed into four cols. */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(120px, auto);
+  grid-auto-flow: dense;
+  gap: 14px;
+}
+.bento--two {
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: minmax(208px, auto);
+}
+
+.bt {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+.bt:hover {
+  border-color: var(--bhp-orange-tint);
+  border-color: color-mix(in srgb, var(--acc) 42%, var(--color-border));
+  background: var(--bhp-orange-wash);
+  background: color-mix(in srgb, var(--acc) 6%, #ffffff);
+}
+.bt__no {
+  font-size: 0.72rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  color: var(--acc);
+  font-variant-numeric: tabular-nums;
+}
+.bt__title {
+  margin: 9px 0 0;
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+  color: var(--bhp-ink);
+}
+.bt__desc {
+  margin: 7px 0 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+/* The lead tile anchors each bento: larger, warm-washed, bigger heading. */
+.bt--lead {
+  grid-column: span 2;
+  grid-row: span 2;
+  background: var(--bhp-orange-wash);
+  background: color-mix(in srgb, var(--acc) 9%, #ffffff);
+  border-color: var(--bhp-orange-tint);
+  border-color: color-mix(in srgb, var(--acc) 32%, var(--color-border));
+}
+.bt--lead .bt__title {
+  margin-top: 14px;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+.bt--lead .bt__desc {
+  font-size: 0.95rem;
+  max-width: 42ch;
+}
+.bt--lead:hover {
+  background: var(--bhp-orange-pale);
+  background: color-mix(in srgb, var(--acc) 14%, #ffffff);
+}
+.bt--wide {
+  grid-column: span 2;
+}
+
+/* ===== Entrance ===== */
+@keyframes hub-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Cards cascade in after the hero/search reveal (styles.css ends near 0.8s).
+     `backwards` fill holds each card hidden through its delay, then releases it
+     to the base rules, so hover transforms still work once it has played. */
+  .wrap.is-ready .cat {
+    animation: hub-rise 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) backwards;
+    animation-delay: calc(0.92s + var(--i, 0) * 0.08s);
+  }
+
+  /* Detail content replays its cascade each time a category opens (the markup is
+     rebuilt on open, so the animation restarts). */
+  .hub.is-detail .detail__bar { animation: hub-rise 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) 0.02s backwards; }
+  .hub.is-detail .detail__id  { animation: hub-rise 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) 0.08s backwards; }
+  .hub.is-detail .bt {
+    animation: hub-rise 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) backwards;
+    animation-delay: calc(0.14s + var(--i, 0) * 0.05s);
+  }
+}
+
+/* ===== Responsive ===== */
+/* styles.css turns .wrap into an ordered flex column below 900px; give the hub a
+   slot after the hero/search (which carries order:1 there). */
+@media (max-width: 900px) {
+  .hub { order: 2; margin-top: 0; }
+}
+
+@media (max-width: 720px) {
+  .bento,
+  .bento--two {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(118px, auto);
+  }
+  .bt--lead { grid-row: span 1; }
+  .bt--lead .bt__title { font-size: 1.3rem; }
+}
+
+@media (max-width: 560px) {
+  .hub__grid { grid-template-columns: 1fr; gap: 14px; }
+  .cat { min-height: 0; padding: 22px; }
+  .bento,
+  .bento--two { grid-template-columns: 1fr; }
+  .bt--lead,
+  .bt--wide { grid-column: span 1; }
+  .detail__bar { flex-wrap: wrap; }
+}

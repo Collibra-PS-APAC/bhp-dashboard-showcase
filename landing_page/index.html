@@ -7,99 +7,36 @@
     <title>BHP Data Catalog</title>
 
     <!-- Shared assets live at the bundle root; this page sits one level down in
-         landing_page/, so it reaches them with a single ../ hop. -->
+         landing_page/, so it reaches them with a single ../ hop. styles.css
+         carries the hero, search, and scope pills; landing-hub.css owns the
+         category cards and the bento. -->
     <link rel="stylesheet" href="../css/fonts.css">
     <link rel="stylesheet" href="../css/brand-tokens.css">
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/landing-hub.css">
     <!-- Slide transition shared with the gateway: animates arrival from, and
          return to, the showcase root. Progressive enhancement only. -->
     <link rel="stylesheet" href="../brand/transitions.css">
     <script src="../brand/transitions.js"></script>
-    <style>
-      /* Showcase-only: the persona tiles sit in a row above the KPI line. */
-      .wrap .persona-tiles { display: flex; flex-wrap: wrap; gap: 14px; margin: 26px 0 4px; }
-      .wrap .persona-tiles .dlm-tile { flex: 1 1 320px; max-width: 460px; margin-top: 0; }
-      /* Join the entrance cascade between the scope pills (0.78s) and the KPI
-         line (0.98s), with a small left-to-right stagger across the two tiles. */
-      @media (prefers-reduced-motion: no-preference) {
-        .wrap.is-ready .persona-tiles .dlm-tile {
-          animation: landing-riseIn 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) 0.86s both;
-        }
-        .wrap.is-ready .persona-tiles .dlm-tile:nth-child(2) { animation-delay: 0.93s; }
-      }
-      /* Mobile reorders the page with explicit flex orders; keep the tiles
-         directly under the hero block. */
-      @media (max-width: 900px) {
-        .wrap .persona-tiles { order: 1; }
-      }
-    </style>
 </head>
 <body>
     <!--
-        Loading overlay (REQ-018). Visible by default so the page never flashes
-        unpainted content before the router resolves. hideLoadingOverlay() in
-        page.js (the router, once it lands in Task 9) fades it out on load.
-    -->
-    <div class="loading-overlay" id="loadingOverlay" role="status" aria-busy="true">
-        <img class="loading-overlay__logo" src="../img/bhp-logo-white.svg" alt="BHP">
-        <div class="loading-overlay__spinner" aria-hidden="true"></div>
-        <p class="loading-overlay__text">Setting up your workspace…</p>
-    </div>
-
-    <!--
-        Routing interstitial (REQ-012). Hidden until the router auto-navigates a
-        Utilities or Privacy user; showInterstitial() in page.js fills the
-        heading and the aria-live message, then resolves after a short minimum.
-        The message starts empty so the live region announces when it is set.
-    -->
-    <div class="routing-interstitial" id="routingInterstitial" hidden>
-        <div class="routing-interstitial__card" role="dialog" aria-modal="true" aria-labelledby="interstitialHeading" tabindex="-1">
-            <h2 class="routing-interstitial__heading" id="interstitialHeading"></h2>
-            <p class="routing-interstitial__message" id="interstitialMessage" aria-live="polite"></p>
-            <div class="routing-interstitial__bar" aria-hidden="true"></div>
-        </div>
-    </div>
-
-    <!--
-        Navigation notice (REQ-013). Hidden until the router or the DLM tile hits
-        an unset/off-origin dashboard URL, or a hand-off is blocked. A fixed
-        banner at top-center: showUnsetUrlNotice()/showNavigationError() in page.js
-        set the message and reveal it; the close button hides it again.
-    -->
-    <div class="notice" id="navNotice" hidden>
-        <span class="notice__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-        </span>
-        <p class="notice__message" id="navNoticeMessage" aria-live="polite"></p>
-        <button type="button" class="notice__close" id="navNoticeClose" aria-label="Dismiss this message">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-        </button>
-    </div>
-
-    <!--
-        The Editorial general landing (Task 18). The router renders this for the
-        general persona; page.js wires the greeting, the live asset total, the KPI
-        sparklines, the two charts, and the search, and tasks.js fills #myTasks.
-        It is scoped under .wrap so its styles never collide with the global
-        overlay / interstitial / notice components above.
+        The landing hub. The hero and search reuse the .wrap / .top / .hero /
+        .search / .scope components from styles.css verbatim, so the front door
+        matches the rest of the catalog. hub.js renders the four category cards
+        into #hubGrid and builds a category's bento into #hubDetail on demand.
     -->
     <main class="wrap" id="landing">
         <div class="top">
             <div class="hero">
                 <p class="eyebrow">BHP Data Catalog</p>
-                <!-- The greeting starts with a neutral fallback so the page reads
-                     well before the API responds; page.js replaces the name. -->
+                <!-- Neutral fallback name until hub.js resolves the signed-in user. -->
                 <h1 class="hero__greeting">
                     <span class="l1">Hi <span id="userFirstName">there</span>.</span><br>
-                    <span class="muted l2">What can we help you find today?</span>
+                    <span class="muted l2">Where would you like to start?</span>
                 </h1>
                 <div class="rule"></div>
-                <!--
-                    Live platform asset total. page.js fetches it on load and
-                    refreshes it in place, so the figure stays current without a
-                    page reload. Starts as an em dash until the first value lands.
-                -->
-                <p class="lede">Search across <span id="assetCount">—</span> governed assets.</p>
+                <p class="lede">Four ways into BHP's governed data, standards, and learning.</p>
             </div>
             <div class="hero-search">
                 <form class="search" id="catalogSearch" role="search" autocomplete="off">
@@ -112,11 +49,6 @@
                         aria-label="Search the data catalog">
                     <button type="submit">Search</button>
                 </form>
-                <!--
-                    Search-scope pills (single-select). page.js wires the click /
-                    keyboard selection and reads the active pill's data-scope when
-                    routing a search.
-                -->
                 <div class="scope" id="searchScope" role="group" aria-label="Limit search to an asset type">
                     <span class="on" role="button" tabindex="0" data-scope="all">All assets</span>
                     <span role="button" tabindex="0" data-scope="dataUtility">Data Utilities</span>
@@ -128,156 +60,35 @@
         </div>
 
         <!--
-            KPI stat row. page.js iterates DashboardData.KPIS, counts each one live,
-            counts the value up, and draws its sparkline. The value/spark nodes are
-            keyed by KPI key (#kpi-<key> / #spark-<key>).
+            The hub stage. Two views share it: #hubGrid (the four cards) and
+            #hubDetail (one opened category). hub.js shows one at a time and runs
+            the exit/enter choreography between them.
         -->
-        <!-- Persona dashboard tiles, above the KPIs so switching pages is one click. -->
-        <div class="persona-tiles">
-                <a class="dlm-tile" id="dlmTile" target="_top" href="#" hidden>
-                    <span class="dlm-tile__icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg>
-                    </span>
-                    <span class="dlm-tile__text">
-                        <b>Data Lifecycle Management</b>
-                        <span>Open your DLM dashboard</span>
-                    </span>
-                    <span class="dlm-tile__arrow" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                    </span>
-                </a>
-                <a class="dlm-tile" id="privacyTile" href="../data_privacy/index.html">
-                    <span class="dlm-tile__icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1 1 0 0 1 1.52 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
-                    </span>
-                    <span class="dlm-tile__text">
-                        <b>Data Privacy</b>
-                        <span>Open the Data Privacy dashboard</span>
-                    </span>
-                    <span class="dlm-tile__arrow" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                    </span>
-                </a>
-        </div>
-
-        <section class="statline" aria-label="Catalog metrics">
-            <div class="stat"><div class="stat__v" id="kpi-dataUtilities">0</div><div class="stat__l">Data Utilities</div><div class="stat__spark" id="spark-dataUtilities"></div></div>
-            <div class="stat"><div class="stat__v" id="kpi-businessDataConcepts">0</div><div class="stat__l">Business Data Concepts</div><div class="stat__spark" id="spark-businessDataConcepts"></div></div>
-            <div class="stat"><div class="stat__v" id="kpi-businessApplications">0</div><div class="stat__l">Business Applications</div><div class="stat__spark" id="spark-businessApplications"></div></div>
-            <div class="stat"><div class="stat__v" id="kpi-users">0</div><div class="stat__l">Active users</div><div class="stat__spark" id="spark-users"></div></div>
-            <div class="stat"><div class="stat__v" id="kpi-myTasks">0</div><div class="stat__l">My open tasks</div><div class="stat__spark" id="spark-myTasks"></div></div>
+        <section class="hub" id="hub" aria-label="Explore the data catalog">
+            <div class="hub__stage">
+                <div class="hub__grid" id="hubGrid"></div>
+                <div class="hub__detail" id="hubDetail" hidden></div>
+            </div>
         </section>
-
-        <div class="figs">
-            <div class="figs__charts">
-                <div class="fig__cap"><h2 class="fig__t">Catalog growth</h2><span class="fig__n">curated assets created</span></div>
-                <div id="growthChart"></div>
-                <div class="fig__cap" style="margin-top:32px"><h2 class="fig__t">Composition by domain</h2><span class="fig__n">top BHP communities</span></div>
-                <div id="domainChart"></div>
-            </div>
-            <div class="figs__tasks">
-                <!--
-                    Workflow-task panel (REQ-006, REQ-007). tasks.js reveals it,
-                    shows a loading skeleton, then fills the timeboxed buckets (or
-                    the empty / error state). #taskCount mirrors the open count.
-                -->
-                <div class="fig__cap fig__cap--flush"><h2 class="fig__t">My tasks</h2><span class="fig__n" id="taskCount">—</span></div>
-                <div class="tgroups" id="myTasks"></div>
-
-                <!--
-                    DLM link tile (REQ-008). Hidden until the router resolves a DLM
-                    user; showDlmTile() in page.js fills the href and reveals it. A
-                    DLM user stays on this landing and reaches their dashboard
-                    through this tile rather than an automatic redirect. target="_top"
-                    sends the whole tab, not the embedded iframe; the click handler
-                    still guards the origin and navigates through window.top.
-                -->
-
-            </div>
-        </div>
     </main>
 
     <!--
-        Script load order (REQ-005 integration):
-        1. config.js          - CONFIG, resolvePersona, assertSameOrigin
-        2. ../shared/utils.js - COLLIBRA_BASE, getCurrentUser, fetchAllUserGroups
-        3. ../vendor/apexcharts.min.js - charting library (vendored, no CDN)
-        4. ../js/apex-bhp-theme.js - BHPApex chart theme helpers
-        5. dashboard-data.js  - live KPI counts, growth curve, composition (DashboardData)
-        6. router.js          - the single DOMContentLoaded entry; orchestrates routing
-        7. tasks.js           - the workflow-task panel (router calls initTaskPanel)
-        8. page.js            - the general-landing render and its UI helpers
-        The router decides the persona, then either auto-navigates or calls
-        renderGeneralLanding in page.js. The general landing is the Editorial
-        dashboard (Task 18): hero, KPI sparklines, charts, and the task panel.
+        Script order:
+        1. ../shared/utils.js - COLLIBRA_BASE, getCurrentUser (for the greeting)
+        2. hub.js             - greeting, search, and the card -> bento choreography
     -->
-    <script src="config.js"></script>
     <script src="../shared/utils.js"></script>
-    <script src="../vendor/apexcharts.min.js"></script>
-    <script src="../js/apex-bhp-theme.js"></script>
-    <script src="dashboard-data.js"></script>
-    <script src="router.js"></script>
-    <script src="tasks.js"></script>
-    <script src="page.js"></script>
+    <script src="hub.js"></script>
 
-    <!-- DEMO ONLY: canned data for the public showcase. Stubs every live
-         fetcher so the page runs with no Collibra instance. -->
+    <!-- DEMO ONLY: canned data for the public showcase. The hub needs only the
+         current user (for the greeting); search is stubbed to a no-op since there
+         is no Collibra instance behind this static page. -->
     <script>
-    (function(){
-      var DAY = 86400000, now = Date.now();
-      function due(d){ return now + d*DAY + 8*3600000; }
-
-      var fx = {
-        user: { id: 'demo-user', firstName: 'Shane', lastName: 'Dolley', userName: 'shane.dolley' },
-        groups: ['DLM Stewards'],
-        totalAssets: 61742,
-        kpis: { dataUtilities: 23410, businessDataConcepts: 9569, businessApplications: 13794, users: 1826 },
-        growth: {
-          months: ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'],
-          monthsFull: ['Jul 2025','Aug 2025','Sep 2025','Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026'],
-          cumulative: [38400, 41050, 44210, 47080, 49830, 52040, 53910, 55620, 57130, 58440, 59640, 61742]
-        },
-        domains: [
-          { name: 'Business Applications', n: 13794 },
-          { name: 'Business Data Concepts', n: 9569 },
-          { name: 'Lifecycle Management', n: 540 },
-          { name: 'Data Privacy', n: 410 },
-          { name: 'Data Domains & Views', n: 320 },
-          { name: 'Policies & Standards', n: 210 }
-        ],
-        tasks: [
-          { title: 'Approve retention schedule: drill logs',  processId: 'retentionAssignment',  d: -2 },
-          { title: 'DSAR response: former contractor',        processId: 'createDsarResponse',   d: 0 },
-          { title: 'Review new concept: Tailings Storage',    processId: 'BHPAddConceptsWizard', d: 1 },
-          { title: 'Classify quarterly finance reports',      processId: 'workItem1',            d: 4 },
-          { title: 'DLM control sign-off: SAP archive',       processId: 'addDLMControl',        d: 12 },
-          { title: 'Escalation: stale asset owners',          processId: 'escalationProcess',    d: null }
-        ]
+    (function () {
+      getCurrentUser = function () {
+        return Promise.resolve({ id: 'demo-user', firstName: 'Shane', lastName: 'Dolley', userName: 'shane.dolley' });
       };
-
-      getCurrentUser = function(){ return Promise.resolve(fx.user); };
-      fetchAllUserGroups = function(){ return Promise.resolve(fx.groups.slice()); };
-      fetchTotalAssetCount = function(){ return Promise.resolve(fx.totalAssets); };
-      DashboardData.fetchKpiCount = function(kpi){
-        return Promise.resolve(kpi.key in fx.kpis ? fx.kpis[kpi.key] : null);
-      };
-      DashboardData.buildComposition = function(){ return Promise.resolve(fx.domains.slice()); };
-      DashboardData.buildGrowthSeries = function(){
-        return Promise.resolve({
-          months: fx.growth.months.slice(),
-          monthsFull: fx.growth.monthsFull.slice(),
-          cumulative: fx.growth.cumulative.slice()
-        });
-      };
-      fetchMyWorkflowTasks = function(){
-        return Promise.resolve(fx.tasks.map(function(t, i){
-          return { id: 'demo-task-' + i, title: t.title, processId: t.processId,
-                   priority: 50, createTime: now - 5*DAY,
-                   dueDate: t.d === null ? null : due(t.d), asset: null };
-        }));
-      };
-      taskHref = function(){ return '#'; };
-      runSearch = function(e){ e.preventDefault(); };
+      runSearch = function (event) { event.preventDefault(); };
     })();
     </script>
 </body>
