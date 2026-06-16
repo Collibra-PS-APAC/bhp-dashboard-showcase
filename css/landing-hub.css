@@ -196,6 +196,11 @@
   outline: 2px solid var(--bhp-orange);
   outline-offset: 2px;
 }
+/* Touch target (WCAG 2.5.5): a 44px tap area for the only way out of a category
+   on touch. Already inline-flex and centred, so min-height is enough. */
+@media (pointer: coarse) {
+  .detail__back { min-height: 44px; }
+}
 
 /* A quiet, honest note: these destinations are not wired up yet. */
 .detail__hint {

@@ -330,6 +330,22 @@ body {
   outline: 2px solid var(--bhp-orange);
   outline-offset: 2px;
 }
+/* Touch targets (WCAG 2.5.5). On coarse pointers, grow the search button and
+   scope pills to a 44px tap area, leaving the compact mouse layout untouched. */
+@media (pointer: coarse) {
+  .wrap .search button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding-inline: 16px;
+  }
+  .wrap .scope span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
 
 /* KPI stat line */
 .wrap .statline {
