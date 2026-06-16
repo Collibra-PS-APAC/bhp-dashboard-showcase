@@ -154,15 +154,15 @@ function buildGrid() {
 
   grid.innerHTML = CATEGORIES.map((cat, i) => `
     <button type="button" class="cat" data-cat="${cat.key}" style="--i:${i}; --acc:${cat.accent}"
-            aria-label="${esc(cat.title)}, ${cat.items.length} areas">
+            aria-labelledby="cat-${cat.key}-t" aria-describedby="cat-${cat.key}-d cat-${cat.key}-c">
       <div class="cat__top">
-        <span class="cat__idx">${cat.idx}</span>
+        <span class="cat__idx" aria-hidden="true">${cat.idx}</span>
         <span class="cat__art" aria-hidden="true">${cat.art}</span>
       </div>
-      <h2 class="cat__title">${esc(cat.title)}</h2>
-      <p class="cat__desc">${esc(cat.desc)}</p>
+      <h2 class="cat__title" id="cat-${cat.key}-t">${esc(cat.title)}</h2>
+      <p class="cat__desc" id="cat-${cat.key}-d">${esc(cat.desc)}</p>
       <div class="cat__foot">
-        <span class="cat__count">${cat.items.length} areas</span>
+        <span class="cat__count" id="cat-${cat.key}-c">${cat.items.length} areas</span>
         <span class="cat__go" aria-hidden="true">${ARROW_RIGHT}</span>
       </div>
     </button>`).join('');

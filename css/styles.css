@@ -283,6 +283,22 @@ body {
   border-color: var(--bhp-orange);
   background: var(--bhp-orange-wash);
 }
+/* Focus indicators (WCAG 2.4.7). The underlined field carries no border of its
+   own, so colour the bar's underline while either control is focused, and give
+   the input and button their own keyboard ring. */
+.wrap .search:focus-within {
+  border-bottom-color: var(--bhp-orange);
+}
+.wrap .search input:focus-visible {
+  outline: 2px solid var(--bhp-orange);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+.wrap .search button:focus-visible {
+  border-color: var(--bhp-orange);
+  outline: 2px solid var(--bhp-orange);
+  outline-offset: 2px;
+}
 
 /* Scope pills (single-select) */
 .wrap .scope {
