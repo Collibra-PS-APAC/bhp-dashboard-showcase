@@ -334,6 +334,124 @@
   grid-column: span 2;
 }
 
+/* ===== Dashboards: forward links to the sibling role/workflow dashboards =====
+   Sits between the hero/search and the category cards. A quieter strip than the
+   .cat grid below it, so it reads as a quick jump to a working dashboard (Admin,
+   Data Privacy, DLM, Data Utilities) rather than a fifth category. The hairline
+   below it separates the strip from the catalog cards. Plain <a> links, so they
+   work even if hub.js never runs. Each link carries its own accent via --acc
+   (orange and teal alternate, matching the cards). */
+.dashes {
+  margin-top: 48px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--color-border);
+}
+.dashes__title {
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+  color: var(--bhp-ink);
+}
+.dashes__sub {
+  margin: 4px 0 18px;
+  font-size: 0.88rem;
+  color: var(--bhp-slate);
+}
+.dashes__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.dash {
+  --acc: var(--bhp-orange);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--bhp-ink);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 0.2s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.dash:hover {
+  border-color: var(--acc);
+  background: color-mix(in srgb, var(--acc) 6%, var(--color-surface));
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(11, 31, 42, 0.08);
+}
+.dash:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 3px;
+}
+
+.dash__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 12px;
+  color: var(--acc);
+  background: color-mix(in srgb, var(--acc) 11%, var(--color-surface));
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.dash__icon svg {
+  width: 22px;
+  height: 22px;
+}
+.dash:hover .dash__icon {
+  transform: scale(1.06) rotate(-2deg);
+}
+
+/* Stack the title over its descriptor. min-width:0 lets a long descriptor wrap
+   inside the grid track instead of forcing the column wider. */
+.dash__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.dash__title {
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+  color: var(--bhp-ink);
+}
+.dash__desc {
+  margin-top: 3px;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: var(--bhp-slate);
+}
+
+.dash__go {
+  display: flex;
+  margin-left: auto;
+  flex: none;
+  color: var(--acc);
+  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.dash__go svg {
+  width: 18px;
+  height: 18px;
+}
+.dash:hover .dash__go {
+  transform: translateX(5px);
+}
+
+/* Touch target (WCAG 2.5.5): keep each link at least 44px tall on touch. */
+@media (pointer: coarse) {
+  .dash { min-height: 44px; }
+}
+
 /* ===== Entrance ===== */
 @keyframes hub-rise {
   from { opacity: 0; transform: translateY(18px); }
@@ -347,6 +465,12 @@
   .wrap.is-ready .cat {
     animation: hub-rise 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) backwards;
     animation-delay: calc(0.92s + var(--i, 0) * 0.08s);
+  }
+
+  /* The dashboards strip rises just after the hero/search, leading the cards
+     below it so the page reveals top to bottom. */
+  .wrap.is-ready .dashes {
+    animation: hub-rise 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.86s backwards;
   }
 
   /* Detail content replays its cascade each time a category opens (the markup is
@@ -368,14 +492,20 @@
   .cat__go,
   .bt,
   .detail__back,
-  .detail__back svg {
+  .detail__back svg,
+  .dash,
+  .dash__icon,
+  .dash__go {
     transition: none;
     animation: none;
   }
   .cat:hover,
   .cat:hover .cat__art,
   .cat:hover .cat__go,
-  .detail__back:hover svg {
+  .detail__back:hover svg,
+  .dash:hover,
+  .dash:hover .dash__icon,
+  .dash:hover .dash__go {
     transform: none;
   }
 }
@@ -384,7 +514,8 @@
 /* styles.css turns .wrap into an ordered flex column below 900px; give the hub a
    slot after the hero/search (which carries order:1 there). */
 @media (max-width: 900px) {
-  .hub { order: 2; margin-top: 0; }
+  .dashes { order: 2; margin-top: 0; }
+  .hub { order: 3; margin-top: 0; }
 }
 
 @media (max-width: 720px) {
@@ -405,4 +536,5 @@
   .bt--lead,
   .bt--wide { grid-column: span 1; }
   .detail__bar { flex-wrap: wrap; }
+  .dashes__grid { grid-template-columns: 1fr; }
 }
