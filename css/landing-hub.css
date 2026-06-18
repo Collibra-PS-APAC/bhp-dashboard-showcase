@@ -8,8 +8,10 @@
    Anchored on BHP Orange #E65400; navy grounds, teal cools. */
 
 /* ===== Hub shell ===== */
+/* The category grid sits below the dashboard name links; a tight margin keeps
+   the two groups close now that no divider separates them. */
 .hub {
-  margin-top: 56px;
+  margin-top: 28px;
 }
 
 /* The two stacked views share one stage; only one is in flow at a time (the
@@ -62,18 +64,12 @@
   outline-offset: 3px;
 }
 
-/* The top row: ordinal label on the left, line art on the right. */
+/* The top row: line art, held to the right. */
 .cat__top {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 18px;
-}
-.cat__idx {
-  font-size: 0.74rem;
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.18em;
-  color: var(--acc);
 }
 .cat__art {
   display: flex;
@@ -110,18 +106,13 @@
   color: var(--bhp-slate);
 }
 
-/* Footer row: count of sub-sections, and an arrow that slides on hover. */
+/* Footer row: an arrow, held to the right, that slides on hover. */
 .cat__foot {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: auto;
   padding-top: 18px;
-}
-.cat__count {
-  font-size: 0.78rem;
-  font-weight: var(--font-weight-medium);
-  color: var(--bhp-slate);
 }
 .cat__go {
   display: flex;
@@ -287,15 +278,8 @@
   background: var(--bhp-orange-wash);
   background: color-mix(in srgb, var(--acc) 6%, var(--color-surface));
 }
-.bt__no {
-  font-size: 0.72rem;
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.08em;
-  color: var(--acc);
-  font-variant-numeric: tabular-nums;
-}
 .bt__title {
-  margin: 9px 0 0;
+  margin: 0;
   font-size: 1rem;
   font-weight: var(--font-weight-bold);
   line-height: 1.25;
@@ -318,7 +302,6 @@
   border-color: color-mix(in srgb, var(--acc) 32%, var(--color-border));
 }
 .bt--lead .bt__title {
-  margin-top: 14px;
   font-size: 1.5rem;
   letter-spacing: -0.01em;
 }
@@ -335,121 +318,113 @@
 }
 
 /* ===== Dashboards: forward links to the sibling role/workflow dashboards =====
-   Sits between the hero/search and the category cards. A quieter strip than the
-   .cat grid below it, so it reads as a quick jump to a working dashboard (Admin,
-   Data Privacy, DLM, Data Utilities) rather than a fifth category. The hairline
-   below it separates the strip from the catalog cards. Plain <a> links, so they
-   work even if hub.js never runs. Each link carries its own accent via --acc
-   (orange and teal alternate, matching the cards). */
+   A clean row of dashboard names between the hero/search and the category cards:
+   no header, no divider, no card chrome. Each name reveals its descriptor and
+   arrow on hover (see .dash below). Plain <a> links, so they work even if hub.js
+   never runs. */
 .dashes {
   margin-top: 48px;
-  padding-bottom: 40px;
-  border-bottom: 1px solid var(--color-border);
 }
-.dashes__title {
-  margin: 0;
-  font-size: 1.08rem;
-  font-weight: var(--font-weight-bold);
-  letter-spacing: -0.01em;
-  color: var(--bhp-ink);
-}
-.dashes__sub {
-  margin: 4px 0 18px;
-  font-size: 0.88rem;
-  color: var(--bhp-slate);
-}
+/* A responsive grid capped at four links per row. The minmax minimum is the
+   larger of 210px and a quarter of the row, so the row never exceeds four
+   columns at any width, yet links still grow to fill it: four or fewer fill the
+   row (three become thirds, two halves), and a fifth or sixth dashboard wraps to
+   a uniform new row, left-aligned. Fully responsive with no width breakpoints,
+   and reads distinctly from the chunky 2x2 category grid below it.
+   (72px is the three 24px gaps that sit between four columns.) */
 .dashes__grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(max(210px, (100% - 72px) / 4), 1fr));
+  gap: 24px;
 }
 
+/* Each link is just the dashboard name at rest, no icon and no card. On hover or
+   keyboard focus a thick underline wipes in left to right, then the descriptor
+   and arrow rise in beneath it a beat later. The reveal sits in flow but hidden,
+   so the row reserves its height once and never shifts when a name is hovered. */
 .dash {
   --acc: var(--bhp-orange);
   display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 18px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
+  flex-direction: column;
+  align-items: flex-start;
   text-decoration: none;
   color: var(--bhp-ink);
-  transition:
-    transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-    border-color 0.2s ease,
-    background 0.25s ease,
-    box-shadow 0.25s ease;
-}
-.dash:hover {
-  border-color: var(--acc);
-  background: color-mix(in srgb, var(--acc) 6%, var(--color-surface));
-  transform: translateY(-2px);
-  box-shadow: 0 12px 26px rgba(11, 31, 42, 0.08);
 }
 .dash:focus-visible {
   outline: 2px solid var(--acc);
-  outline-offset: 3px;
+  outline-offset: 5px;
+  border-radius: 3px;
 }
 
-.dash__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  flex: none;
-  border-radius: 12px;
-  color: var(--acc);
-  background: color-mix(in srgb, var(--acc) 11%, var(--color-surface));
-  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+/* The head shrink-wraps the name, so the underline matches the text width. */
+.dash__head {
+  position: relative;
+  align-self: flex-start;
+  max-width: 100%;
 }
-.dash__icon svg {
-  width: 22px;
-  height: 22px;
-}
-.dash:hover .dash__icon {
-  transform: scale(1.06) rotate(-2deg);
-}
-
-/* Stack the title over its descriptor. min-width:0 lets a long descriptor wrap
-   inside the grid track instead of forcing the column wider. */
-.dash__body {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-.dash__title {
-  font-size: 1rem;
+.dash__name {
+  display: block;
+  font-size: 1.18rem;
   font-weight: var(--font-weight-bold);
   letter-spacing: -0.01em;
+  line-height: 1.2;
   color: var(--bhp-ink);
+  transition: color 0.3s ease;
 }
-.dash__desc {
-  margin-top: 3px;
+.dash__line {
+  display: block;
+  width: 100%;
+  height: 3px;
+  margin-top: 9px;
+  border-radius: 2px;
+  background: var(--acc);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.dash__more {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 8px;
+  color: var(--bhp-slate);
   font-size: 0.84rem;
   line-height: 1.4;
-  color: var(--bhp-slate);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.34s ease 0.18s,
+    transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) 0.18s;
 }
-
-.dash__go {
-  display: flex;
-  margin-left: auto;
+.dash__arrow {
+  display: inline-flex;
   flex: none;
   color: var(--acc);
-  transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.dash__go svg {
-  width: 18px;
-  height: 18px;
-}
-.dash:hover .dash__go {
-  transform: translateX(5px);
+.dash__arrow svg {
+  width: 16px;
+  height: 16px;
 }
 
-/* Touch target (WCAG 2.5.5): keep each link at least 44px tall on touch. */
-@media (pointer: coarse) {
-  .dash { min-height: 44px; }
+.dash:hover .dash__name,
+.dash:focus-visible .dash__name {
+  color: var(--acc);
+}
+.dash:hover .dash__line,
+.dash:focus-visible .dash__line {
+  transform: scaleX(1);
+}
+.dash:hover .dash__more,
+.dash:focus-visible .dash__more {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* No-hover devices (touch) can't reveal on hover, so show the underline and the
+   descriptor by default there. */
+@media (hover: none) {
+  .dash__line { transform: scaleX(1); }
+  .dash__more { opacity: 1; transform: none; }
 }
 
 /* ===== Entrance ===== */
@@ -493,19 +468,16 @@
   .bt,
   .detail__back,
   .detail__back svg,
-  .dash,
-  .dash__icon,
-  .dash__go {
+  .dash__name,
+  .dash__line,
+  .dash__more {
     transition: none;
     animation: none;
   }
   .cat:hover,
   .cat:hover .cat__art,
   .cat:hover .cat__go,
-  .detail__back:hover svg,
-  .dash:hover,
-  .dash:hover .dash__icon,
-  .dash:hover .dash__go {
+  .detail__back:hover svg {
     transform: none;
   }
 }
@@ -536,5 +508,4 @@
   .bt--lead,
   .bt--wide { grid-column: span 1; }
   .detail__bar { flex-wrap: wrap; }
-  .dashes__grid { grid-template-columns: 1fr; }
 }

@@ -28,51 +28,51 @@ const ARROW_LEFT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
    default = 1x1. The dense four-column grid then composes the asymmetric bento. */
 const CATEGORIES = [
   {
-    key: 'business', idx: '01', accent: 'var(--bhp-orange)', art: ART.business,
+    key: 'business', accent: 'var(--bhp-orange)', art: ART.business,
     title: 'Business Data',
     desc: 'Domains, metrics, terms, and the rules that keep them trustworthy.',
     items: [
-      { no: '1.1', title: 'Data Domains', desc: "Subject areas that group BHP's data.", span: 'lead' },
-      { no: '1.2', title: 'Business Metrics', desc: 'Defined measures and how they are calculated.' },
-      { no: '1.3', title: 'Business Terms', desc: 'The shared vocabulary for the business.' },
-      { no: '1.4', title: 'Data Quality Rules', desc: 'Checks that data must pass to be trusted.', span: 'wide' },
+      { title: 'Data Domains', desc: "Subject areas that group BHP's data.", span: 'lead' },
+      { title: 'Business Metrics', desc: 'Defined measures and how they are calculated.' },
+      { title: 'Business Terms', desc: 'The shared vocabulary for the business.' },
+      { title: 'Data Quality Rules', desc: 'Checks that data must pass to be trusted.', span: 'wide' },
     ],
   },
   {
-    key: 'technical', idx: '02', accent: 'var(--bhp-teal)', art: ART.technical,
+    key: 'technical', accent: 'var(--bhp-teal)', art: ART.technical,
     title: 'Technical Data',
     desc: 'Where data lives: platforms, utilities, and the Snowflake estate.',
     bentoClass: 'bento--two',
     items: [
-      { no: '2.1', title: 'Data Utilities by Data Platform', desc: 'Consumption-ready data products, grouped by platform.' },
-      { no: '2.2', title: 'Snowflake Databases', desc: 'Databases and schemas in the Snowflake estate.' },
+      { title: 'Data Utilities by Data Platform', desc: 'Consumption-ready data products, grouped by platform.' },
+      { title: 'Snowflake Databases', desc: 'Databases and schemas in the Snowflake estate.' },
     ],
   },
   {
-    key: 'standards', idx: '03', accent: 'var(--bhp-teal)', art: ART.standards,
+    key: 'standards', accent: 'var(--bhp-teal)', art: ART.standards,
     title: 'Data Standards',
     desc: 'The global standard and the guidelines that govern BHP data.',
     items: [
-      { no: '3.1', title: 'Data Global Standard', desc: 'The top-level standard for managing BHP data.', span: 'lead' },
-      { no: '3.2', title: 'Data Governance Framework Guidelines', desc: 'How governance roles and decisions work.', span: 'wide' },
-      { no: '3.3', title: 'Business Data Concepts - Definition & Creation', desc: 'Defining and creating business data concepts.' },
-      { no: '3.4', title: 'Data Quality Guidelines', desc: 'Practices for measuring and improving quality.' },
-      { no: '3.5', title: 'Using & Safeguarding our Data', desc: 'Handling data safely and within policy.', span: 'wide' },
-      { no: '3.6', title: 'Technology Quality Data Standard', desc: 'Quality requirements for technology data.' },
-      { no: '3.7', title: 'Data Utility Badge of Trust Specification', desc: 'What a data utility must meet to earn the badge.' },
+      { title: 'Data Global Standard', desc: 'The top-level standard for managing BHP data.', span: 'lead' },
+      { title: 'Data Governance Framework Guidelines', desc: 'How governance roles and decisions work.', span: 'wide' },
+      { title: 'Business Data Concepts - Definition & Creation', desc: 'Defining and creating business data concepts.' },
+      { title: 'Data Quality Guidelines', desc: 'Practices for measuring and improving quality.' },
+      { title: 'Using & Safeguarding our Data', desc: 'Handling data safely and within policy.', span: 'wide' },
+      { title: 'Technology Quality Data Standard', desc: 'Quality requirements for technology data.' },
+      { title: 'Data Utility Badge of Trust Specification', desc: 'What a data utility must meet to earn the badge.' },
     ],
   },
   {
-    key: 'learning', idx: '04', accent: 'var(--bhp-orange)', art: ART.learning,
+    key: 'learning', accent: 'var(--bhp-orange)', art: ART.learning,
     title: 'Learning & Enablement',
     desc: 'Training, pathways, and the LMS for working with quality data.',
     items: [
-      { no: '4.1', title: 'Training Materials & Quick Guides', desc: 'How-to guides and reference material.', span: 'lead' },
-      { no: '4.2', title: 'Data@BHP', desc: 'The hub for data news and community at BHP.' },
-      { no: '4.3', title: 'Data Learning Pathways', desc: 'Guided routes to build data skills.' },
-      { no: '4.4', title: 'LMS: Discovery Quality Data', desc: 'Course: discovering quality data.', span: 'wide' },
-      { no: '4.5', title: 'LMS: Working with Quality Data', desc: 'Course: working with quality data.', span: 'wide' },
-      { no: '4.6', title: 'Data Focused Field Leadership Knowledge Centre', desc: 'Resources for field leaders working with data.', span: 'wide' },
+      { title: 'Training Materials & Quick Guides', desc: 'How-to guides and reference material.', span: 'lead' },
+      { title: 'Data@BHP', desc: 'The hub for data news and community at BHP.' },
+      { title: 'Data Learning Pathways', desc: 'Guided routes to build data skills.' },
+      { title: 'LMS: Discovery Quality Data', desc: 'Course: discovering quality data.', span: 'wide' },
+      { title: 'LMS: Working with Quality Data', desc: 'Course: working with quality data.', span: 'wide' },
+      { title: 'Data Focused Field Leadership Knowledge Centre', desc: 'Resources for field leaders working with data.', span: 'wide' },
     ],
   },
 ];
@@ -154,15 +154,13 @@ function buildGrid() {
 
   grid.innerHTML = CATEGORIES.map((cat, i) => `
     <button type="button" class="cat" data-cat="${cat.key}" style="--i:${i}; --acc:${cat.accent}"
-            aria-labelledby="cat-${cat.key}-t" aria-describedby="cat-${cat.key}-d cat-${cat.key}-c">
+            aria-labelledby="cat-${cat.key}-t" aria-describedby="cat-${cat.key}-d">
       <div class="cat__top">
-        <span class="cat__idx" aria-hidden="true">${cat.idx}</span>
         <span class="cat__art" aria-hidden="true">${cat.art}</span>
       </div>
       <h2 class="cat__title" id="cat-${cat.key}-t">${esc(cat.title)}</h2>
       <p class="cat__desc" id="cat-${cat.key}-d">${esc(cat.desc)}</p>
       <div class="cat__foot">
-        <span class="cat__count" id="cat-${cat.key}-c">${cat.items.length} areas</span>
         <span class="cat__go" aria-hidden="true">${ARROW_RIGHT}</span>
       </div>
     </button>`).join('');
@@ -180,7 +178,6 @@ function tileMarkup(item, i) {
   const span = item.span === 'lead' ? ' bt--lead' : item.span === 'wide' ? ' bt--wide' : '';
   return `
     <article class="bt${span}" style="--i:${i}">
-      <span class="bt__no">${esc(item.no)}</span>
       <h3 class="bt__title">${esc(item.title)}</h3>
       <p class="bt__desc">${esc(item.desc)}</p>
     </article>`;
