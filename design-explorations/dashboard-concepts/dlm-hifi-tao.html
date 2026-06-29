@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLM · Technical Application Owner — hi-fi mockup</title>
+
+<!-- Only four shared assets are linked; every component below is inlined, matching
+     the data-privacy-hifi.html precedent. Figures are baked in from the 2026-06-29
+     bhp-test probe (see docs/brainstorm/dlm-hifi-dashboards/dlm-probe-findings.md).
+     This file is the shared shell: BAO and Legal copy it and swap data-role + content. -->
+<link rel="stylesheet" href="../../css/fonts.css">
+<link rel="stylesheet" href="../../css/brand-tokens.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);color:var(--bhp-ink);background:var(--bhp-paper)}
+  :root{--deep:#A63D00;--err:#B42318;--ok:#0E7C86}
+
+  /* ===== Faux Collibra navy chrome (context: the dashboard sits below the top nav) ===== */
+  .chrome{display:flex;align-items:center;gap:12px;background:var(--bhp-ink);color:#cfd6da;
+    padding:10px 24px;font-size:12px;letter-spacing:.04em}
+  .chrome .sp{flex:1}
+  .chrome .me{width:26px;height:26px;border-radius:50%;background:var(--bhp-orange);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+
+  /* ===== Role switcher header (NEW component, shared across all three files) =====
+     The active tab is resolved from body[data-role]; the same CSS block is copied
+     identically into every file, so only data-role and aria-current differ. */
+  .switch{display:flex;align-items:center;gap:28px;background:#fff;border-bottom:1px solid var(--bhp-line);
+    padding:12px 28px}
+  .switch__brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0}
+  .switch__brand .logo{height:26px;width:auto;display:block}
+  .switch__product{font-size:13px;font-weight:700;color:var(--bhp-ink);letter-spacing:.01em;
+    padding-left:12px;border-left:1px solid var(--bhp-line)}
+  .switch__tabs{display:flex;gap:6px;margin-left:auto}
+  .switch__tabs a{position:relative;text-decoration:none;color:var(--bhp-slate);font-size:13px;
+    font-weight:var(--font-weight-medium);padding:8px 14px 14px;border-radius:8px 8px 0 0;
+    transition:color .15s ease,background .15s ease}
+  .switch__tabs a:hover{color:var(--bhp-ink);background:var(--bhp-orange-wash)}
+  .switch__tabs a::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;
+    border-radius:3px;background:transparent;transition:background .15s ease}
+  /* Active tab: orange underline + bold, driven by the body's data-role. Identical in all files. */
+  body[data-role="tao"]   .switch__tabs a[href$="dlm-hifi-tao.html"],
+  body[data-role="bao"]   .switch__tabs a[href$="dlm-hifi-bao.html"],
+  body[data-role="legal"] .switch__tabs a[href$="dlm-hifi-legal.html"]{color:var(--bhp-orange);font-weight:700}
+  body[data-role="tao"]   .switch__tabs a[href$="dlm-hifi-tao.html"]::after,
+  body[data-role="bao"]   .switch__tabs a[href$="dlm-hifi-bao.html"]::after,
+  body[data-role="legal"] .switch__tabs a[href$="dlm-hifi-legal.html"]::after{background:var(--bhp-orange)}
+
+  .page{max-width:1200px;margin:0 auto;padding:24px 28px 64px}
+
+  /* ===== Bento grid =====
+     Action-first: the queue is the first row after the identity header. */
+  .bento{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+    grid-template-areas:
+      "head    head    head    head"
+      "queue   queue   queue   hero"
+      "stat    stat    stat    stat"
+      "bars    bars    bars    backlog"
+      "search  search  apps    apps";}
+  .tile{background:#fff;border:1px solid var(--bhp-line);border-radius:16px;padding:18px}
+
+  /* ===== Header tile: identity + per-role trend ===== */
+  .head{grid-area:head;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 20px}
+  .head .id .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--bhp-grey);font-weight:700}
+  .head .id h1{font-size:26px;font-weight:700;margin-top:3px}
+  .head .id h1 span{color:var(--bhp-orange)}
+  .head .trend{display:flex;align-items:center;gap:14px;min-width:300px}
+  .head .trend .lbl{text-align:right}
+  .head .trend .lbl b{display:block;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--bhp-grey)}
+  .head .trend .lbl small{font-size:11px;color:var(--bhp-grey);opacity:.8}
+  .head .trend .spark{width:230px;height:54px}
+
+  /* ===== KPI strip (statline pattern, from admin, inside a bento tile) ===== */
+  .stat{grid-area:stat;padding:0;overflow:hidden}
+  .statrow{display:flex}
+  .statrow .s{flex:1;min-width:0;padding:18px 22px;border-left:1px solid var(--bhp-line)}
+  .statrow .s:first-child{border-left:0}
+  .statrow .s .v{font-size:2rem;font-weight:700;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+  .statrow .s .v small{font-size:1rem;font-weight:700;color:var(--bhp-grey)}
+  .statrow .s.flag .v{color:var(--err)}
+  .statrow .s .l{margin-top:7px;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;color:var(--bhp-grey)}
+  .statrow .s .sp{margin-top:8px;height:30px}
+
+  /* ===== Hero metric tile (orange gradient) ===== */
+  .hero{grid-area:hero;border:none;color:#fff;position:relative;overflow:hidden;
+    background:linear-gradient(135deg,#FF7A33,var(--bhp-orange) 55%,#C4470A);
+    display:flex;flex-direction:column;justify-content:center}
+  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.22),transparent 55%)}
+  .hero>*{position:relative;z-index:1}
+  .hero .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.9);font-weight:700}
+  .hero .big{font-size:64px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:6px 0 2px}
+  .hero .cap{font-size:13.5px;color:rgba(255,255,255,.95)}
+  .hero .legend{display:flex;flex-direction:column;gap:7px;margin-top:16px}
+  .hero .legend span{display:flex;align-items:center;gap:8px;font-size:13px;color:#fff}
+  .hero .legend .dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.6);flex:none}
+  .hero .legend .dot.d2{background:rgba(255,255,255,.85)}
+  .hero .legend .dot.risk{background:#FFE0CE;box-shadow:0 0 0 2px rgba(255,255,255,.35)}
+  .hero .legend b{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums}
+
+  /* ===== Scoped search ===== */
+  .search{grid-area:search;display:flex;flex-direction:column;justify-content:center}
+  .search h2{font-size:13px;font-weight:700;margin-bottom:6px;color:var(--bhp-slate)}
+  .csearch{display:flex;align-items:center;gap:14px;border-bottom:2px solid var(--bhp-ink);padding:10px 2px}
+  .csearch svg{width:22px;height:22px;color:var(--bhp-ink);flex-shrink:0}
+  .csearch input{flex:1;min-width:0;padding:4px 0;border:0;outline:0;background:transparent;font:inherit;
+    font-size:.95rem;color:var(--bhp-ink)}
+  .csearch input::placeholder{color:var(--bhp-grey)}
+  .csearch button{margin:0;padding:6px 14px;border:1px solid transparent;border-radius:6px;background:transparent;
+    color:var(--bhp-orange);font:inherit;font-size:.78rem;font-weight:var(--font-weight-medium);
+    text-transform:uppercase;letter-spacing:.16em;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+  .csearch button:hover{border-color:var(--bhp-orange);background:var(--bhp-orange-wash)}
+  .scope{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .scope span{padding:4px 12px;border:1px solid var(--bhp-line);border-radius:20px;font-size:.78rem;
+    color:var(--bhp-slate);cursor:pointer;transition:border-color .15s ease,background .15s ease,color .15s ease}
+  .scope span:hover{border-color:var(--bhp-ink);color:var(--bhp-ink)}
+  .scope span.on,.scope span.on:hover{background:var(--bhp-ink);color:#fff;border-color:var(--bhp-ink)}
+
+  /* ===== Section heads ===== */
+  .sh{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .sh h2{font-size:15px;font-weight:700}
+  .sh .meta{font-size:12px;color:var(--bhp-grey)}
+
+  /* ===== Action queue ===== */
+  .queue{grid-area:queue}
+  .filter{position:relative}
+  .filter .btn{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--bhp-line);
+    background:#fff;border-radius:10px;padding:8px 13px;font-size:13px;color:var(--bhp-slate);
+    font-family:var(--font-body);cursor:pointer;transition:border-color .15s}
+  .filter .btn:hover{border-color:var(--bhp-orange)}
+  .filter .btn b{color:var(--bhp-ink)}
+  .filter .btn .cv{width:7px;height:7px;border-right:2px solid var(--bhp-grey);border-bottom:2px solid var(--bhp-grey);transform:rotate(45deg);margin-top:-3px}
+  .menu{position:absolute;right:0;top:calc(100% + 6px);z-index:20;background:#fff;border:1px solid var(--bhp-line);
+    border-radius:12px;box-shadow:0 14px 30px rgba(11,31,42,.14);padding:8px;min-width:240px;display:none}
+  .menu.open{display:block}
+  .menu label{display:flex;align-items:center;gap:10px;padding:7px 9px;border-radius:8px;font-size:13px;cursor:pointer}
+  .menu label:hover{background:var(--bhp-orange-wash)}
+  .menu input{accent-color:var(--bhp-orange);width:15px;height:15px}
+
+  .grp{margin-top:14px}
+  .grp:first-of-type{margin-top:2px}
+  .grp .gh{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--bhp-slate);
+    text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+  .grp .gh.over{color:var(--err)}
+  .grp .gh .n{color:var(--bhp-grey);font-weight:400}
+  .ti{display:flex;align-items:center;gap:12px;padding:12px 12px;border:1px solid var(--bhp-line);
+    border-radius:12px;margin-bottom:8px;cursor:pointer;transition:background .15s,border-color .15s}
+  .ti:hover{background:var(--bhp-orange-wash);border-color:var(--bhp-orange-tint)}
+  .ti .wid{font-size:11.5px;color:var(--bhp-grey);width:118px;flex:none;font-variant-numeric:tabular-nums}
+  .ti .t{flex:1;font-size:13.5px;font-weight:500}
+  .due{font-size:12px;color:var(--bhp-grey);width:78px;text-align:right;flex:none}
+  .due.over{color:var(--err);font-weight:700}
+
+  /* ===== Status / type chips (NEW component family — text label always present) ===== */
+  .chip{font-size:11.5px;border:1px solid var(--bhp-line);border-radius:999px;padding:2px 11px;
+    color:var(--bhp-slate);background:var(--bhp-paper);white-space:nowrap}
+  .chip--retention{border-color:var(--bhp-orange-tint);background:var(--bhp-orange-wash);color:var(--deep)}
+  .chip--disposal{border-color:#F3C0C0;background:#FCEFEF;color:var(--err)}
+  .chip--record{border-color:var(--bhp-teal-pale);background:#EBF7F8;color:var(--bhp-teal-dark)}
+  .chip--control{border-color:var(--bhp-line);background:var(--bhp-paper);color:var(--bhp-slate)}
+  .chip--accepted{border-color:var(--bhp-teal-pale);background:#EBF7F8;color:var(--bhp-teal-dark)}
+  .chip--candidate{border-color:var(--bhp-orange-tint);background:var(--bhp-orange-wash);color:var(--deep)}
+
+  /* ===== Lifecycle bar chart tile ===== */
+  .bars{grid-area:bars}
+  .figcap{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    border-bottom:1px solid var(--bhp-line);padding-bottom:8px;margin-bottom:6px}
+  .figcap h2{font-size:15px;font-weight:700}
+  .figcap .n{font-size:12px;color:var(--bhp-grey)}
+  .chart{width:100%}
+
+  /* ===== Rails (disposal backlog, applications) ===== */
+  .backlog{grid-area:backlog;background:#FBFAF8}
+  .apps{grid-area:apps;background:#FBFAF8}
+  .backlog .ti,.apps .ti{background:#fff}
+  /* Narrow (1-col) rail rows: id as a small sub-line so the title keeps full width */
+  .backlog .ti{align-items:flex-start}
+  .backlog .ti .t{font-weight:500}
+  .backlog .ti .t .rid{display:block;font-size:11px;color:var(--bhp-grey);font-weight:400;margin-bottom:2px}
+  .backlog .ti .due{width:auto;flex:none;padding-top:1px}
+  /* Callout: tinted fill + leading icon (no side-stripe). Info by default; risk variant in red. */
+  .callout{display:flex;align-items:flex-start;gap:11px;border:1px solid var(--bhp-line);border-radius:12px;
+    background:var(--bhp-orange-wash);padding:13px 15px;font-size:13px;color:var(--bhp-slate);margin-bottom:12px}
+  .callout__ic{width:18px;height:18px;flex:none;margin-top:1px;color:var(--bhp-orange)}
+  .callout p{margin:0}
+  .callout--risk{background:#FCEFEF;border-color:#F3C0C0}
+  .callout--risk .callout__ic{color:var(--err)}
+  .callout b{color:var(--err)}
+  .morelink{font-size:12px;color:var(--bhp-grey);margin-top:4px}
+  .coverage{font-size:12px;color:var(--bhp-grey);margin-top:10px;padding-top:10px;border-top:1px solid var(--bhp-line)}
+
+  /* ===== Focus & interaction states (one consistent orange ring, brand-correct) ===== */
+  a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visible{
+    outline:2px solid var(--bhp-orange);outline-offset:2px;border-radius:6px}
+  .csearch:focus-within{border-bottom-color:var(--bhp-orange)}
+  .csearch input:focus-visible{outline:none}
+
+  /* ===== On-load rise ===== */
+  .rise{opacity:0;transform:translateY(14px);animation:rise .55s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.rise{animation:none;opacity:1;transform:none}}
+
+  /* Desktop demo target is >=1180px (the bento is a fixed 4-col grid). Below that it
+     stacks so the page never breaks during an incidental narrow view. */
+  @media (max-width:1100px){
+    .bento{grid-template-columns:1fr;grid-template-areas:"head" "queue" "hero" "stat" "bars" "backlog" "search" "apps";}
+    .head{flex-direction:column;align-items:flex-start;gap:14px}
+    .head .trend{min-width:0;width:100%;justify-content:space-between}
+    .statrow{flex-wrap:wrap}
+    .statrow .s{flex:1 1 45%;border-left:0}
+    .switch{flex-wrap:wrap;gap:12px}
+    .switch__tabs{margin-left:0}
+  }
+</style>
+</head>
+<body data-role="tao">
+
+  <!-- Collibra context bar -->
+  <div class="chrome"><span>Collibra Data Intelligence Platform</span><span class="sp"></span><span>Data Lifecycle Management</span><span class="me">PR</span></div>
+
+  <!-- Shared role switcher (identical markup in all three files except aria-current) -->
+  <header class="switch">
+    <a class="switch__brand" href="dlm-hifi-tao.html" aria-label="BHP Data Lifecycle Management home">
+      <svg class="logo" viewBox="0 0 369.5 204.1" role="img" aria-label="BHP" xmlns="http://www.w3.org/2000/svg"><path fill="#E65400" d="M318.4,83.2c0,17.8-14.4,32.2-32.2,32.2h-21.8v37.6h-25.1V51h46.9C304,51,318.4,65.5,318.4,83.2z M282.2,72.1h-17.7v21h17.7c5.6,0,10.1-5,10.1-10.5C292.2,77,287.7,72.1,282.2,72.1z M199.1,51v41.2h-34.9V51h-25.1v102h25.1v-37.6h34.9v37.6h25.1V51H199.1z M129.2,125.3c0,16.8-15,27.8-31.3,27.8H51V51h45.3c16.6,0,30.4,12.2,30.4,27.3c0,11.9-5.6,18.3-13.3,23.2C122.4,105.3,129.2,111.1,129.2,125.3z M92.9,111.9H76.1v19.7h16.8c6.5,0,10.1-4.4,10.1-9.8C102.9,116.3,98.4,111.9,92.9,111.9z M90.4,72.1H76.1v21h14.3c6.6,0,10.1-5,10.1-10.5C100.5,77,97.1,72.1,90.4,72.1z"/></svg>
+      <span class="switch__product">Data Lifecycle Management</span>
+    </a>
+    <nav class="switch__tabs" aria-label="DLM role views">
+      <a href="dlm-hifi-tao.html" aria-current="page">Technical Application Owner</a>
+      <a href="dlm-hifi-bao.html">Business Application Owner</a>
+      <a href="dlm-hifi-legal.html">Legal Officer</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <div class="bento">
+
+      <!-- Identity + disposals trend -->
+      <section class="tile head rise">
+        <div class="id">
+          <div class="eyebrow">Technical Application Owner</div>
+          <h1>Hi <span>Priya</span></h1>
+        </div>
+        <div class="trend">
+          <div class="lbl"><b>Disposals executed</b><small>per month, last 12 months</small></div>
+          <div class="spark" id="trend"></div>
+        </div>
+      </section>
+
+      <!-- ACTION-FIRST: retention & disposal queue -->
+      <section class="tile queue rise" style="animation-delay:.05s">
+        <div class="sh">
+          <h2>My retention &amp; disposal queue</h2>
+          <div class="filter">
+            <button class="btn" id="filterBtn" aria-haspopup="true" aria-expanded="false">Workflow: <b>All types</b> <span class="cv"></span></button>
+            <div class="menu" id="filterMenu">
+              <label><input type="checkbox" checked> Retention assignment</label>
+              <label><input type="checkbox" checked> Record definition</label>
+              <label><input type="checkbox" checked> Disposal execution</label>
+              <label><input type="checkbox" checked> Add DLM control</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="grp">
+          <div class="gh over">Overdue <span class="n">(2)</span></div>
+          <div class="ti"><span class="wid">disposalExecution</span><span class="t">Execute disposal — Cost Centre Structure (SAMS WAIO)</span><span class="chip chip--disposal">Disposal</span><span class="due over">Overdue</span></div>
+          <div class="ti"><span class="wid">retentionAssignment</span><span class="t">Apply retention label — Driver Monitoring (AUS)</span><span class="chip chip--retention">Retention</span><span class="due over">Overdue</span></div>
+        </div>
+        <div class="grp">
+          <div class="gh">This week <span class="n">(3)</span></div>
+          <div class="ti"><span class="wid">recordDefinition</span><span class="t">Define record — Access Zones (GBL)</span><span class="chip chip--record">Record def.</span><span class="due">Thu</span></div>
+          <div class="ti"><span class="wid">disposalExecution</span><span class="t">Verify deletion evidence — Events and Breaches</span><span class="chip chip--disposal">Disposal</span><span class="due">Fri</span></div>
+          <div class="ti"><span class="wid">addDLMControl</span><span class="t">Add control — Documentum BHP_RECORDS</span><span class="chip chip--control">Control</span><span class="due">Mon</span></div>
+        </div>
+        <div class="grp">
+          <div class="gh">This month <span class="n">(1)</span></div>
+          <div class="ti"><span class="wid">retentionAssignment</span><span class="t">Confirm expiry trigger — Hosting Type (GBL)</span><span class="chip chip--retention">Retention</span><span class="due">24 Jul</span></div>
+        </div>
+      </section>
+
+      <!-- Hero: open DLM tasks (the lead action metric) -->
+      <section class="tile hero rise" style="animation-delay:.1s">
+        <div class="eyebrow">My open DLM tasks</div>
+        <div class="big" id="openCount">0</div>
+        <div class="cap">retention &amp; disposal tasks assigned to you</div>
+        <div class="legend">
+          <span><i class="dot"></i> Retention assignment <b>3</b></span>
+          <span><i class="dot d2"></i> Record definition <b>1</b></span>
+          <span><i class="dot risk"></i> Disposal execution <b>2</b></span>
+        </div>
+      </section>
+
+      <!-- KPI strip (estate context) -->
+      <section class="tile stat rise" style="animation-delay:.15s" aria-label="Estate metrics">
+        <div class="statrow">
+          <div class="s"><div class="v" id="kpiApps">0</div><div class="l">My applications &amp; repositories</div><div class="sp" id="spApps"></div></div>
+          <div class="s"><div class="v" id="kpiInst">0</div><div class="l">Retention instances I enforce</div><div class="sp" id="spInst"></div></div>
+          <div class="s flag"><div class="v" id="kpiOver">0</div><div class="l">Disposal actions overdue</div><div class="sp" id="spOver"></div></div>
+          <div class="s"><div class="v" id="kpiHolds">0</div><div class="l">Legal holds to enforce</div><div class="sp" id="spHolds"></div></div>
+        </div>
+      </section>
+
+      <!-- Retention instances by lifecycle stage -->
+      <section class="tile bars rise" style="animation-delay:.2s">
+        <div class="figcap"><h2>Retention instances by lifecycle stage</h2><span class="n">Retention Instance, by status (83)</span></div>
+        <div class="chart" id="lifecycle"></div>
+      </section>
+
+      <!-- Disposal backlog rail -->
+      <section class="tile backlog rise" style="animation-delay:.25s">
+        <div class="sh"><h2>Disposal backlog</h2><span class="meta">status: Elapsed</span></div>
+        <div class="callout callout--risk"><svg class="callout__ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><p><b>11 instances</b> are past their retention period with no disposal action applied. Execute or escalate.</p></div>
+        <div class="ti"><span class="t"><span class="rid">RI · AUS FY2015</span>Cost Centre Structure — SAMS (WAIO)</span><span class="due over">Overdue</span></div>
+        <div class="ti"><span class="t"><span class="rid">RI · AUS FY2018</span>Address — Contractor Website</span><span class="due over">Overdue</span></div>
+        <div class="ti"><span class="t"><span class="rid">RI · AUS FY2015</span>Cost Centre Structure — NiW</span><span class="due over">Overdue</span></div>
+        <div class="morelink">+ 8 more past retention</div>
+      </section>
+
+      <!-- Scoped catalog search -->
+      <section class="tile search rise" style="animation-delay:.3s">
+        <h2>Search the catalog</h2>
+        <form class="csearch" role="search" autocomplete="off" onsubmit="return false">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search the data catalog" aria-label="Search the data catalog">
+          <button type="submit">Search</button>
+        </form>
+        <div class="scope" id="searchScope" role="group" aria-label="Limit search to an asset type">
+          <span class="on" role="button" tabindex="0" data-scope="retentionInstance">Retention Instances</span>
+          <span role="button" tabindex="0" data-scope="schedule">Retention &amp; Disposal Schedules</span>
+          <span role="button" tabindex="0" data-scope="application">Applications</span>
+          <span role="button" tabindex="0" data-scope="all">All assets</span>
+        </div>
+      </section>
+
+      <!-- My applications & repositories rail -->
+      <section class="tile apps rise" style="animation-delay:.35s">
+        <div class="sh"><h2>My applications &amp; repositories</h2><span class="meta">6 owned</span></div>
+        <div class="ti"><span class="wid">App Service</span><span class="t">DSS (Driver Safety System) — CVM</span><span class="chip chip--accepted">Accepted</span></div>
+        <div class="ti"><span class="wid">App Service</span><span class="t">Documentum — Group Functions</span><span class="chip chip--accepted">Accepted</span></div>
+        <div class="ti"><span class="wid">Repository</span><span class="t">BHP_RECORDS::/GLOBAL_FUNCTIONS</span><span class="chip chip--candidate">Candidate</span></div>
+        <div class="coverage">Coverage: 4 of 6 have retention applied · 2 need configuration</div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="../../vendor/apexcharts.min.js"></script>
+  <script src="../../js/apex-bhp-theme.js"></script>
+  <script>
+    /* ===== Baked-in data (2026-06-29 bhp-test probe) =====
+       PROBE = live counts; DEMO = illustrative, anchored on real totals. The split
+       matches dlm-probe-findings.md so the production swap to live REST is mechanical. */
+    var DLM = {
+      PROBE: {
+        retentionInstances: 83,
+        lifecycle: [
+          { label: 'Defined — retention running',       value: 65, risk: false },
+          { label: 'Retain permanently',                value: 3,  risk: false },
+          { label: 'Elapsed — authorised to apply',     value: 2,  risk: false },
+          { label: 'Elapsed — disposal applied',        value: 2,  risk: false },
+          { label: 'Elapsed — disposal NOT carried out',value: 11, risk: true  }
+        ],
+        legalHolds: 12,
+        disposalBacklog: 11   // Retention Instance, status Elapsed - Disposal Action Not Carried Out
+      },
+      DEMO: {
+        myApplications: 6,    // subset of 16 Application Services + 8 repositories
+        openTasks: 6,         // workflow tasks assigned to this user
+        disposalsPerMonth: [1, 0, 2, 1, 0, 2, 1, 0, 1, 2, 1, 2]  // 12-month trend
+      }
+    };
+
+    // Minimal reduced-motion-aware count-up (inlined; no helpers.js dependency).
+    function countUp(el, to){
+      el = document.querySelector(el); if(!el) return;
+      var fmt = function(n){ return Number(n).toLocaleString('en-US'); };
+      if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent = fmt(to); return; }
+      var dur = 1000, t0 = null;
+      function step(t){ if(t0===null) t0=t; var p=Math.min((t-t0)/dur,1); var e=1-Math.pow(1-p,3);
+        el.textContent = fmt(Math.round(to*e)); if(p<1) requestAnimationFrame(step); }
+      requestAnimationFrame(step);
+    }
+
+    // Compact column "sparkline" via the BHPApex column helper (sparkline mode hides axes).
+    function microColumn(sel, data){
+      new ApexCharts(document.querySelector(sel), BHPApex.column({
+        series:[{ name:'Disposals', data:data }], height:54,
+        extra:{
+          chart:{ sparkline:{ enabled:true } },
+          plotOptions:{ bar:{ columnWidth:'58%', borderRadius:2 } },
+          tooltip:{ x:{ show:false }, y:{ formatter:function(v){ return v + ' disposed'; } } }
+        }
+      })).render();
+    }
+    function statSpark(sel, data, color){
+      new ApexCharts(document.querySelector(sel), BHPApex.sparkline({
+        series:[{ name:'t', data:data }], height:30, color:color || BHPApex.tokens.ORANGE
+      })).render();
+    }
+
+    function render(){
+      if(!window.ApexCharts || !window.BHPApex) return;
+
+      // KPI counters
+      countUp('#kpiApps',  DLM.DEMO.myApplications);
+      countUp('#kpiInst',  DLM.PROBE.retentionInstances);
+      countUp('#kpiOver',  DLM.PROBE.disposalBacklog);
+      countUp('#kpiHolds', DLM.PROBE.legalHolds);
+      countUp('#openCount', DLM.DEMO.openTasks);
+
+      // Header trend: disposals executed per month (DEMO series, see findings)
+      microColumn('#trend', DLM.DEMO.disposalsPerMonth);
+
+      // Per-KPI sparklines (DEMO trends, for visual continuity with the admin statline)
+      statSpark('#spApps',  [5,5,6,6,6,6]);
+      statSpark('#spInst',  [74,76,78,80,81,83]);
+      statSpark('#spOver',  [6,7,8,9,10,11], BHPApex.tokens.ORANGE);
+      statSpark('#spHolds', [8,9,10,11,12,12], BHPApex.tokens.TEAL);
+
+      // Lifecycle stages: categorical horizontal bars (distributed colours so the risk
+      // stage reads in red; sums to 83). Built through BHPApex.bar per the chart-theme rule.
+      var stages = DLM.PROBE.lifecycle;
+      new ApexCharts(document.querySelector('#lifecycle'), BHPApex.bar({
+        series:[{ name:'Instances', data: stages.map(function(s){ return s.value; }) }],
+        categories: stages.map(function(s){ return s.label; }),
+        height:240,
+        extra:{
+          plotOptions:{ bar:{ distributed:true, barHeight:'62%', borderRadius:5,
+            dataLabels:{ position:'top' } } },
+          colors: stages.map(function(s){ return s.risk ? '#B42318' : BHPApex.tokens.ORANGE; }),
+          fill:{ type:'solid' },
+          dataLabels:{ enabled:true, textAnchor:'start', offsetX:6,
+            style:{ colors:[BHPApex.tokens.INK], fontWeight:700 },
+            formatter:function(v){ return v; } },
+          legend:{ show:false },
+          tooltip:{ y:{ formatter:function(v){ return v + ' instances'; } } },
+          xaxis:{ min: 0, max: 83, tickAmount: 4 },
+          yaxis:{ labels:{ maxWidth: 240, style:{ fontSize:'12.5px' } } }
+        }
+      })).render();
+    }
+    if(document.readyState!=='loading') render(); else window.addEventListener('DOMContentLoaded', render);
+
+    // Workflow filter menu (demo toggle) + aria-expanded
+    var fb = document.getElementById('filterBtn'), fm = document.getElementById('filterMenu');
+    fb.addEventListener('click', function(){ var open = fm.classList.toggle('open'); fb.setAttribute('aria-expanded', open ? 'true' : 'false'); });
+    document.addEventListener('click', function(e){
+      if(!fb.contains(e.target) && !fm.contains(e.target)){ fm.classList.remove('open'); fb.setAttribute('aria-expanded','false'); }
+    });
+
+    // Search-scope pills: single-select
+    var scope = document.getElementById('searchScope');
+    scope.addEventListener('click', function(e){
+      var pill = e.target.closest('[data-scope]'); if(!pill) return;
+      scope.querySelectorAll('span').forEach(function(s){ s.classList.remove('on'); });
+      pill.classList.add('on');
+    });
+    scope.addEventListener('keydown', function(e){
+      if(e.key!=='Enter' && e.key!==' ') return;
+      var pill = e.target.closest('[data-scope]'); if(!pill) return; e.preventDefault();
+      scope.querySelectorAll('span').forEach(function(s){ s.classList.remove('on'); });
+      pill.classList.add('on');
+    });
+  </script>
+</body>
+</html>

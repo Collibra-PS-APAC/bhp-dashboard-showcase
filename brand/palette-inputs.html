@@ -12,6 +12,21 @@
 <link rel="stylesheet" href="palette.css">
 <link rel="stylesheet" href="transitions.css">
 <script src="transitions.js"></script>
+<style>
+  /* DLM scoped-search dropdown (used in the Legal Officer dashboard). Scoped under
+     .dlm-scopesel so it never collides with the gallery's other dropdown components. */
+  .dlm-scopesel{position:relative;display:inline-block;font-family:Arimo,Arial,sans-serif}
+  .dlm-scopesel .selbtn{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);
+    background:#fff;border-radius:10px;padding:9px 14px;font-size:14px;color:var(--ink);cursor:pointer}
+  .dlm-scopesel .selbtn:hover,.dlm-scopesel.is-hover .selbtn{border-color:var(--bhp-orange)}
+  .dlm-scopesel .selbtn .lab{color:var(--grey);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+  .dlm-scopesel .selbtn b{font-weight:700}
+  .dlm-scopesel .selbtn .cv{width:7px;height:7px;border-right:2px solid var(--grey);border-bottom:2px solid var(--grey);transform:rotate(45deg);margin-top:-3px}
+  .dlm-scopesel .opts{margin:8px 0 0;background:#fff;border:1px solid var(--line);border-radius:12px;
+    box-shadow:0 14px 30px rgba(11,31,42,.14);padding:6px;min-width:230px;list-style:none}
+  .dlm-scopesel .opts li{padding:9px 12px;border-radius:8px;font-size:14px;color:var(--slate)}
+  .dlm-scopesel .opts li[aria-selected="true"],.dlm-scopesel .opts li.hl{background:var(--orange-wash);color:var(--ink)}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -125,6 +140,26 @@
           <div class="d">29</div><div class="d">30</div><div class="d mute">1</div><div class="d mute">2</div><div class="d mute">3</div><div class="d mute">4</div><div class="d mute">5</div>
         </div>
       </div></div>
+    </div>
+
+    <!-- DLM scoped-search dropdown -->
+    <div class="comp-card span2">
+      <div class="clabel"><span>Scoped search dropdown</span><b>DLM · Legal</b></div>
+      <div class="ctag">Closed</div>
+      <div class="crow"><div class="dlm-scopesel">
+        <button type="button" class="selbtn" aria-haspopup="listbox" aria-expanded="false"><span class="lab">Scope</span> <b>Legal Holds</b> <span class="cv"></span></button>
+      </div></div>
+      <div class="ctag">Open · keyboard-operable listbox (aria-expanded, aria-selected)</div>
+      <div class="crow"><div class="dlm-scopesel">
+        <button type="button" class="selbtn" aria-haspopup="listbox" aria-expanded="true"><span class="lab">Scope</span> <b>Legal Holds</b> <span class="cv"></span></button>
+        <ul class="opts" role="listbox" aria-label="Search scope">
+          <li role="option" aria-selected="true">Legal Holds</li>
+          <li role="option" aria-selected="false">Obligations</li>
+          <li role="option" aria-selected="false">Jurisdictions</li>
+          <li role="option" aria-selected="false">All assets</li>
+        </ul>
+      </div></div>
+      <p class="note">A dropdown variant of the scope chips, for roles with more scope options than fit a chip row. The Legal Officer search uses it to scope to Legal Holds, Obligations, Jurisdictions, or all assets.</p>
     </div>
 
   </div>

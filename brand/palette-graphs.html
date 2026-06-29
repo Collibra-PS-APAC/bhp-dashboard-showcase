@@ -38,6 +38,10 @@
         <div id="c-spark"></div>
       </div>
     </div>
+    <div class="chart-card span2"><div class="clabel"><span>DLM · Holds placed vs released</span><b>two-series line</b></div>
+      <div id="c-dlm-holds"></div>
+      <p class="note">Used in the Legal Officer dashboard header trend. Two series on <b style="color:var(--bhp-orange)">BHPApex.line</b> - orange for holds placed, teal for holds released - to read placements against releases over time. A genuine time series, unlike the categorical review-cadence bars.</p>
+    </div>
   </div>
 
   <div class="foot">BHP ORANGE #E65400 (DARKEST) · APEXCHARTS GRADIENT THEME · BHPApex HELPERS · GENERATED FOR the test instance</div>
@@ -73,6 +77,17 @@
     })).render();
     new ApexCharts(document.querySelector('#c-spark'), BHPApex.sparkline({
       series:[{name:'Trend', data:[12,18,15,22,19,28,33,30,41,38,47]}], height:80
+    })).render();
+    // DLM Legal header trend: two-series line (holds placed vs released).
+    new ApexCharts(document.querySelector('#c-dlm-holds'), BHPApex.line({
+      series:[
+        {name:'Placed',   data:[1,0,2,1,1,0,2,1,0,1,1,2]},
+        {name:'Released', data:[0,1,0,1,0,1,0,0,1,0,1,0]}
+      ],
+      categories:['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'],
+      height:230,
+      extra:{ colors:['#E65400','#0E7C86'], fill:{type:'solid'}, stroke:{width:3, curve:'smooth'},
+        markers:{size:0, hover:{size:5}}, yaxis:{ min:0, tickAmount:3 } }
     })).render();
   }
   if(document.readyState !== 'loading'){ renderCharts(); } else { window.addEventListener('DOMContentLoaded', renderCharts); }
