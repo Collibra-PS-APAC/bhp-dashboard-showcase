@@ -46,6 +46,73 @@ html:active-view-transition-type(slide-up)::view-transition-new(root)    { anima
 @keyframes vt-out-up    { to   { transform: translateY(-100%); } }
 @keyframes vt-in-bottom { from { transform: translateY(100%); } }
 
+/* Pixelated wave: landing -> data privacy ---------------------------------- */
+/* Adapted from Osmo Supply's "Pixelated Wave". The incoming page is revealed
+   by a clip-path advancing in 12 discrete steps (matching the pixel columns)
+   while transitions.js flashes BHP-orange pixels along the reveal edge. The
+   old page stays put underneath; the overlay gets its own snapshot layer
+   (bhp-pixels) so the clip does not cut it off. */
+
+html:active-view-transition-type(pixelate)::view-transition-old(root) {
+  animation: none;
+}
+html:active-view-transition-type(pixelate)::view-transition-new(root) {
+  /* 0.2s lead-in + 0.6s reveal mirrors transitions.js (clipStart/clipDuration). */
+  animation: vt-pixel-reveal 0.6s steps(12, start) 0.2s both;
+}
+html:active-view-transition-type(pixelate)::view-transition-new(bhp-pixels) {
+  animation: none;
+}
+
+@keyframes vt-pixel-reveal {
+  from { clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%); }
+  to   { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); }
+}
+
+/* Portrait: the grid rebuilds as rows, so the reveal runs top to bottom. */
+@media (orientation: portrait) {
+  @keyframes vt-pixel-reveal {
+    from { clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%); }
+    to   { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); }
+  }
+}
+
+/* The pixel overlay (markup lives in the destination page). */
+.transition {
+  z-index: 100;
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  overflow: clip;
+  view-transition-name: bhp-pixels;
+}
+
+.transition__panel {
+  opacity: 0;
+  flex-flow: row;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.transition__col {
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 100%;
+  display: flex;
+}
+
+.transition__pixel {
+  aspect-ratio: 1;
+  background-color: #E65400; /* BHP Orange */
+  width: 100%;
+  opacity: 0;
+}
+
 /* Honour reduced-motion: skip the slide, just swap. */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),

@@ -11,8 +11,19 @@
   <link rel="stylesheet" href="../css/fonts.css">
   <link rel="stylesheet" href="../css/brand-tokens.css">
   <link rel="stylesheet" href="../css/data-privacy.css">
+  <link rel="stylesheet" href="../brand/transitions.css">
+  <script src="../brand/transitions.js"></script>
 </head>
 <body>
+  <!-- Pixelated-wave overlay: transitions.js flashes this grid in BHP orange
+       when arriving from the landing page. Inert otherwise. -->
+  <div data-transition-wrap class="transition" aria-hidden="true">
+    <div data-transition-panel class="transition__panel">
+      <div data-transition-col class="transition__col">
+        <div data-transition-pixel class="transition__pixel"></div>
+      </div>
+    </div>
+  </div>
   <!-- No top header: the Collibra chrome above the iframe already carries the
        BHP logo. The dashboard starts straight into its bento grid. -->
   <main class="dp-page">
