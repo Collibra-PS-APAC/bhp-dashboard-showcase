@@ -60,7 +60,7 @@
      with the Web Animations API, so no library is needed. The overlay markup
      ([data-transition-wrap]) lives in the destination page. */
 
-  var pixelHorizontalAmount = 12;
+  var pixelHorizontalAmount = 32;
   var transitionDuration = 1;
   var pixelFadeDuration = 0.2;
   var pixelOverlap = 0.3;

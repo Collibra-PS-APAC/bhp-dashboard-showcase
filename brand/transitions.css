@@ -48,7 +48,7 @@ html:active-view-transition-type(slide-up)::view-transition-new(root)    { anima
 
 /* Pixelated wave: landing -> data privacy ---------------------------------- */
 /* Adapted from Osmo Supply's "Pixelated Wave". The incoming page is revealed
-   by a clip-path advancing in 12 discrete steps (matching the pixel columns)
+   by a clip-path advancing in 32 discrete steps (matching the pixel columns)
    while transitions.js flashes BHP-orange pixels along the reveal edge. The
    old page stays put underneath; the overlay gets its own snapshot layer
    (bhp-pixels) so the clip does not cut it off. */
@@ -58,7 +58,7 @@ html:active-view-transition-type(pixelate)::view-transition-old(root) {
 }
 html:active-view-transition-type(pixelate)::view-transition-new(root) {
   /* 0.2s lead-in + 0.6s reveal mirrors transitions.js (clipStart/clipDuration). */
-  animation: vt-pixel-reveal 0.6s steps(12, start) 0.2s both;
+  animation: vt-pixel-reveal 0.6s steps(32, start) 0.2s both;
 }
 html:active-view-transition-type(pixelate)::view-transition-new(bhp-pixels) {
   animation: none;
